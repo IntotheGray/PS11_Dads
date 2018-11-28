@@ -1,0 +1,528 @@
+package asteroids;
+
+import java.awt.event.*;
+import java.util.Iterator;
+import javax.swing.*;
+import asteroids.participants.AlienShip;
+import asteroids.participants.Asteroid;
+import asteroids.participants.Ship;
+import static asteroids.Constants.*;
+
+/**
+ * Controls a game of Asteroids.
+ */
+public class Controller implements KeyListener, ActionListener
+{
+    // The state of all the Participants
+    private ParticipantState pstate;
+    
+    // The ship (if one is active) or null (otherwise)
+    private Ship ship;
+
+    // The alien ship (if one is active) or null (otherwise)
+    private AlienShip alienShip;
+
+    // When this timer goes off, it is time to refresh the animation
+    private Timer refreshTimer;
+    
+    // When this timer goes off, it is time to make one of the beat sounds.
+    private Timer beatTimer;
+    
+    // True if the "beat 1" sound should be played next, false othewise.
+    private boolean playBeat1;
+
+    // The time at which a transition to a new stage of the game should be made.
+    // A transition is scheduled a few seconds in the future to give the user
+    // time to see what has happened before doing something like going to a new
+    // level or resetting the current level.
+    private long transitionTime;
+
+    // The score of the game
+    private int score;
+
+    // Number of lives left
+    private int lives;
+
+    // The game display
+    private Display display;
+
+    // The level of the game
+    private int level;
+
+    // Keeps track of whether the keys corresponding to turn left, turn right,
+    // shoot, and propel are currently pressed.
+    private boolean turnLeft;
+    private boolean turnRight;
+    private boolean shoot;
+    private boolean propel;
+
+    /**
+     * Constructs a controller to coordinate the game and screen
+     */
+    public Controller ()
+    {
+        // Initialize the ParticipantState
+        pstate = new ParticipantState();
+
+        // Set up the refresh timer.
+        refreshTimer = new Timer(FRAME_INTERVAL, this);
+        
+        // Set up the beat timer
+        beatTimer = new Timer(INITIAL_BEAT, this);
+
+        // Clear the transitionTime
+        transitionTime = Long.MAX_VALUE;
+        
+        // Record the display object
+        display = new Display(this);
+
+        // Bring up the splash screen and start the timers
+        splashScreen();
+        display.setVisible(true);
+        refreshTimer.start();
+        playBeat1 = true;
+    }
+
+    /**
+     * Returns the ship, or null if there isn't one
+     */
+    public Ship getShip ()
+    {
+        return ship;
+    }
+
+    /**
+     * Configures the game screen to display the splash screen
+     */
+    private void splashScreen ()
+    {
+        // Clear the screen, reset the level, and display the legend
+        clear();
+        level = 1;
+        display.setLegend("Asteroids");
+
+        // Place asteroids near the corners of the screen.
+        placeAsteroids();
+    }
+
+    /**
+     * The game is over. Displays a message to that effect.
+     */
+    private void finalScreen ()
+    {
+        display.setLegend(GAME_OVER);
+        display.removeKeyListener(this);
+    }
+
+    /**
+     * Place a new ship in the center of the screen. Remove any existing ship
+     * first.
+     */
+    private void placeShip ()
+    {
+        // Place a new ship
+        Participant.expire(ship);
+        ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
+        addParticipant(ship);
+
+        // Schedule an alien ship
+        scheduleTransition((int) Math.round(ALIEN_DELAY * (RANDOM.nextDouble() + 1)));
+    }
+
+    /**
+     * Place a new alien ship on the left or right side of the screen. Remove
+     * any existing alien ship first.
+     */
+    private void placeAlienShip ()
+    {
+        Participant.expire(alienShip);
+        if (level > 1)
+        {
+            int alienShipSize = (level == 2) ? 1 : 0;
+            alienShip = new AlienShip(alienShipSize, this);
+            alienShip.setPosition(0, SIZE * RANDOM.nextDouble());
+            alienShip.setVelocity(5 - alienShipSize, RANDOM.nextInt(2) * Math.PI);
+            addParticipant(alienShip);
+        }
+    }
+    
+    /**
+     * Adds a Participant to the game
+     */
+    public void addParticipant (Participant p)
+    {
+        pstate.addParticipant(p);
+    }
+
+    /**
+     * Places asteroids near the corners of the screen. Gives them random
+     * velocities and rotations.  Initially there are four, but with each 
+     * level there is one more.
+     */
+    private void placeAsteroids ()
+    {
+        addParticipant(new Asteroid(0, "TL", this));
+        addParticipant(new Asteroid(1, "TR", this));
+        addParticipant(new Asteroid(2, "BL", this));
+        addParticipant(new Asteroid(3, "BR", this));
+
+        for (int i = 1; i < level; i++)
+        {
+            String corner;
+            switch (RANDOM.nextInt(4))
+            {
+                case 0: 
+                    corner = "TL";
+                    break;
+                case 1:
+                    corner = "TR";
+                    break;
+                case 2:
+                    corner = "BL";
+                    break;
+                default:
+                    corner = "BR";
+            }
+            addParticipant(new Asteroid(RANDOM.nextInt(4), corner, this));
+        }
+    }
+    
+    /**
+     * Reports whether the number of SBullets is greater than
+     * or equal to the bulletLimit.
+     */
+    public boolean atBulletLimit (int bulletLimit)
+    {
+        return pstate.countSBullets() >= bulletLimit;
+    }
+
+    /**
+     * Clears the screen so that nothing is displayed
+     */
+    private void clear ()
+    {
+        pstate.clear();
+        display.setLegend("");
+        if (ship != null)
+        {
+            ship.coast();
+            ship = null;
+        }
+        if (alienShip != null)
+        {
+            Participant.expire(alienShip);
+            alienShip.remove();
+            alienShip = null;
+        }
+    }
+
+    /**
+     * Sets things up and begins a new game.
+     */
+    private void initialScreen ()
+    {
+        // Start the beat sound
+        beatTimer.stop();
+        beatTimer.setDelay(INITIAL_BEAT);
+        playBeat1 = true;
+        beatTimer.start();
+        
+        // Clear the screen
+        clear();
+
+        // Reset statistics
+        lives = 3;
+        score = 0;
+        level = 1;
+       
+        // Place four asteroids
+        placeAsteroids();
+
+        // Place the ship
+        placeShip();
+
+        // Reset key state
+        turnLeft = false;
+        turnRight = false;
+        shoot = false;
+        propel = false;
+
+        // Display labels
+        display.setLives(lives);
+        display.setScore(score);
+        display.setLevel(level);
+
+        // Start listening to events (but not twice)
+        display.removeKeyListener(this);
+        display.addKeyListener(this);
+
+        // Give focus to the game screen
+        display.requestFocusInWindow();
+    }
+
+    /**
+     * Displays the next screen after all the asteroids have been destroyed.
+     */
+    private void nextScreen ()
+    {
+        // Clear the screen, place new asteroids, relocate
+        // the ship, and reset the blasting statistics.
+        clear();
+        level++;
+        placeAsteroids();
+        placeShip();
+        display.setLevel(level);
+        beatTimer.setDelay(INITIAL_BEAT);
+        beatTimer.restart();
+    }
+
+    /**
+     * The ship has been destroyed
+     */
+    public void shipDestroyed ()
+    {
+        // Null out the ship
+        ship = null;
+
+        // Decrement and redisplay lives
+        lives--;
+        display.setLives(lives);
+        
+        // Turn off the beat
+        beatTimer.stop();
+
+        // Since the ship was destroyed, schedule a transition
+        scheduleTransition(END_DELAY);
+    }
+
+    /**
+     * An asteroid of the given size has been destroyed
+     */
+    public void asteroidDestroyed (int size)
+    {
+        // The score depends on the size of the asteroid
+        addToScore(ASTEROID_SCORE[size]);
+
+        // If all the asteroids are gone, schedule a transition
+        if (pstate.countAsteroids() == 0)
+        {
+            beatTimer.stop();
+            scheduleTransition(END_DELAY);
+        }
+    }
+
+    /**
+     * An alien ship of the given size has been destroyed
+     */
+    public void alienShipDestroyed (int size)
+    {
+        // The score depends on the size of the alien ship
+        addToScore(ALIENSHIP_SCORE[size]);
+
+        // Null it out
+        alienShip = null;
+
+        // Schedule the appearance of a new alien ship if there is
+        // currently a regular ship
+        if (ship != null)
+        {
+            scheduleTransition((int) Math.round(ALIEN_DELAY * (RANDOM.nextDouble() + 1)));
+        }
+    }
+
+    /**
+     * Adds delta to the score
+     */
+    public void addToScore (int delta)
+    {
+        score += delta;
+        display.setScore(score);
+    }
+
+    /**
+     * Reports the level we are on
+     */
+    public int getLevel ()
+    {
+        return level;
+    }
+
+    /**
+     * Schedules a transition m msecs in the future
+     */
+    private void scheduleTransition (int m)
+    {
+        transitionTime = System.currentTimeMillis() + m;
+    }
+
+    /**
+     * This method will be invoked because of button presses and timer events.
+     */
+    @Override
+    public void actionPerformed (ActionEvent e)
+    {
+        // The start button has been pressed. Stop whatever we're doing
+        // and bring up the initial screen
+        if (e.getSource() instanceof JButton)
+        {
+            initialScreen();
+        }
+        
+        // Time to play a neat
+        else if (e.getSource() == beatTimer)
+        {
+            String beat = (playBeat1) ? "beat1" : "beat2";
+            playBeat1 = !playBeat1;
+            Participant.getSounds().play(beat);
+            beatTimer.setDelay(Math.max(FASTEST_BEAT, beatTimer.getDelay() - BEAT_DELTA));
+        }
+
+        // Time to refresh the screen and deal with keyboard input
+        else if (e.getSource() == refreshTimer)
+        {
+            // It may be time to make a game transition
+            performTransition();
+
+            // Move the participants to their new locations
+            pstate.moveParticipants();
+
+            // Rotate left
+            if (turnLeft && ship != null)
+            {
+                ship.turnLeft();
+            }
+
+            // Rotate right
+            if (turnRight && ship != null)
+            {
+                ship.turnRight();
+            }
+
+            // Fire thrusters
+            if (propel && ship != null)
+            {
+                ship.accelerate();
+            }
+            else if (ship != null)
+            {
+                ship.coast();
+            }
+
+            // Shoot
+            if (shoot && ship != null)
+            {
+                ship.shoot();
+                shoot = false;
+            }
+
+            // Refresh screen
+            display.refresh();
+        }
+    }
+
+    /**
+     * Returns an iterator over the active participants
+     */
+    public Iterator<Participant> getParticipants ()
+    {
+        return pstate.getParticipants();
+    }
+
+    /**
+     * If the transition time has been reached, transition to a new state
+     */
+    private void performTransition ()
+    {
+        // Do something only if the time has been reached
+        if (transitionTime <= System.currentTimeMillis())
+        {
+            // Clear the transition time
+            transitionTime = Long.MAX_VALUE;
+
+            // If there are no lives left, the game is over. Show the final
+            // screen.
+            if (lives <= 0)
+            {
+                finalScreen();
+            }
+
+            // If all the asteroids were destroyed, proceed to the next level
+            else if (pstate.countAsteroids() == 0)
+            {
+                beatTimer.setDelay(INITIAL_BEAT);
+                nextScreen();
+            }
+
+            // If the ship was destroyed, place a new one and continue
+            else if (ship == null)
+            {
+                beatTimer.restart();
+                placeShip();
+            }
+
+            // If the alien ship was destroyed, place a new one and continue
+            else if (alienShip == null)
+            {
+                placeAlienShip();
+            }
+        }
+    }
+
+    /**
+     * If a key of interest is pressed, record that it is down.
+     */
+    @Override
+    public void keyPressed (KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)
+        {
+            turnLeft = true;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D)
+        {
+            turnRight = true;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W)
+        {
+            propel = true;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_DOWN
+                || e.getKeyCode() == KeyEvent.VK_S)
+        {
+            shoot = true;
+        }
+    }
+
+    /**
+     * If a key of interest is released, record that it is no longer down.
+     */
+    @Override
+    public void keyReleased (KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)
+        {
+            turnLeft = false;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D)
+        {
+            turnRight = false;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W)
+        {
+            propel = false;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_DOWN
+                || e.getKeyCode() == KeyEvent.VK_S)
+        {
+            shoot = false;
+        }
+    }
+
+    /**
+     * Ignore these events.
+     */
+    @Override
+    public void keyTyped (KeyEvent e)
+    {
+    }
+}

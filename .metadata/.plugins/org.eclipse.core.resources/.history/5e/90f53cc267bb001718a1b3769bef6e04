@@ -1,0 +1,77 @@
+package scan;
+
+import java.util.NoSuchElementException;
+
+/**
+ * Provides a stripped-down version of java.util.Scanner.
+ * 
+ * @author Joseph Zachary
+ */
+public class MyScanner
+{
+    /**
+     * The tokens that made up the string that was originally passed to the constructor.
+     * The string is broken into tokens by splitting at white-space sequences.
+     */
+    private String[] tokens;
+
+    /**
+     * The number of tokens that have been successfully returned to the user.  The next
+     * token is thus tokens[index].  It follows that 0 <= index < tokens.length.
+     */
+    private int index;
+
+    /**
+     * Creates a MyScanner that takes its tokens from s.
+     */
+    public MyScanner (String s)
+    {
+        index = 0;
+        s = s.trim();
+        if (s.length() == 0)
+        {
+            tokens = new String[0];
+        }
+        else
+        {
+            tokens = s.split("\\s+");
+        }
+    }
+
+    public boolean hasNext ()
+    {
+        return index < tokens.length;
+    }
+
+    public String next ()
+    {
+        if (hasNext())
+        {
+            index++;
+            return tokens[index - 1];
+        }
+        else
+        {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public boolean hasNextInt ()
+    {
+        try
+        {
+            Integer.parseInt(tokens[index]);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    public int nextInt ()
+    {
+        String token = next();
+        return Integer.parseInt(token);
+    }
+}

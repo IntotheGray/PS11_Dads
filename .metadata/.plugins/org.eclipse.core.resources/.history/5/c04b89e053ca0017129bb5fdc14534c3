@@ -1,0 +1,106 @@
+package mobiles2;
+
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Line2D;
+
+/**
+ * A Bob is a Mobile consists of a weight hanging from a vertical wire.
+ * 
+ * Here's a diagram, where W denotes a weight:
+ * 
+ * <pre>
+ *                             |
+ *                             W
+ * </pre>
+ */
+public class Bob implements Mobile
+{
+    /**
+     * If isBob is true, contains the weight of the Bob.
+     */
+    private int weight;
+
+    /**
+     * Creates a Bob with the given weight.
+     */
+    public Bob (int weight)
+    {
+        this.weight = weight;
+    }
+
+    /**
+     * Draws this Mobile on g, beginning at point (x,y).
+     */
+    public void display (Graphics2D g, double x, double y)
+    {
+        FontMetrics fm = g.getFontMetrics();
+        int weightWidth = fm.stringWidth(weight + "");
+        int height = fm.getHeight();
+        g.draw(new Line2D.Double(x, y, x, y + WIRE));
+        g.draw(new Arc2D.Double(x - height, y + WIRE, 2 * height, 2 * height, 0, 360, Arc2D.OPEN));
+        g.drawString(weight + "", (float) (x - weightWidth / 2), (float) (y + WIRE + 1.25 * height));
+    }
+
+    /**
+     * Returns the total weight of all the Bobs in this Mobile.
+     */
+    public int weight ()
+    {
+        return weight;
+    }
+
+    /**
+     * Reports whether all the Rods in this Mobile are completely horizontal. A Rod will be horizontal if the product of
+     * its left length and the weight of its left Mobile equals the product of its right length and the weight of its
+     * right Mobile.
+     */
+    public boolean isBalanced ()
+    {
+        return true;
+    }
+
+    /**
+     * Returns the length of the longest path through this Mobile. There is one path for every Bob in the Mobile. Each
+     * path leads from the top of the Mobile to a Bob, and its length is the number of Rods encountered along the way
+     * plus one.
+     */
+    public int depth ()
+    {
+        return 1;
+    }
+
+    /**
+     * Returns the number of Bobs contained in this Mobile.
+     */
+    public int bobCount ()
+    {
+        return 1;
+    }
+
+    /**
+     * Returns the number of Rods contained in this Mobile.
+     */
+    public int rodCount ()
+    {
+        return 0;
+    }
+
+    /**
+     * Returns the length of the longest Rod contained in this Mobile. If there are no Rods, returns zero.
+     */
+    public int longestRod ()
+    {
+        return 0;
+    }
+
+    /**
+     * Returns the weight of the heaviest Bob contained in this Mobile.
+     */
+    public int heaviestBob ()
+    {
+        return weight;
+    }
+}

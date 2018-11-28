@@ -1,0 +1,25 @@
+package interfaces;
+
+public class A implements Speaker, Singer
+{
+    private String greeting;
+    private String verse;
+    
+    public A (String greeting, String verse)
+    {
+        this.greeting = greeting;
+        this.verse = verse;
+    }
+    
+    @Override
+    public String sing ()
+    {
+        return verse;
+    }
+
+    @Override
+    public String speak ()
+    {
+        return greeting;
+    } 
+}

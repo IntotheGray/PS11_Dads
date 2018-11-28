@@ -1,0 +1,49 @@
+package paint1;
+
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * A JPanel that supports painting shapes via click and drag operations. Any
+ * number of shapes can be drawn. Notice that PaintPanel extends JPanel and
+ * implements two interfaces, which allows a PaintPanel object to deal with the
+ * mouse events that occur over it.
+ */
+@SuppressWarnings("serial")
+public class PaintPanel extends JPanel
+{
+    private Paint paintFrame;
+
+    /**
+     * Creates a PaintPanel containing one shape
+     */
+    public PaintPanel (ButtonGroup shapeButtons, ButtonGroup colorButtons,
+                        Paint paintFrame)
+    {
+        setBackground(Color.WHITE);
+        this.paintFrame = paintFrame;
+    }
+
+    /**
+     * When Swing determines that a component needs to be painted, it calls this
+     * method. The version that comes with JPanel fills in the background color.
+     * This overrides that version by also painting the shapes.
+     */
+    @Override
+    public void paintComponent (Graphics g)
+    {
+        // We invoke the original, overridden version to paint the background.
+        super.paintComponent(g);
+        
+        // Turn on anti-aliasing
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);       
+
+        // Paint the shape
+        g.setColor(Color.blue);
+        g.drawOval(200, 100, 150, 250);
+        
+        // Display a legend
+        paintFrame.setLegend("Oval");
+    }
+}

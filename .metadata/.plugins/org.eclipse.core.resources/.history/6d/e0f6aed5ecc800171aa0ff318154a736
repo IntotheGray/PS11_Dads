@@ -1,0 +1,36 @@
+package inheritance;
+
+/**
+ * Represents a Cat
+ */
+public class Cat extends Animal
+{
+    /** The name of this Cat */
+    private String name;
+    
+    /**
+     * Creates a Cat with the provided name
+     */
+    public Cat (String name)
+    {
+        super(4);
+        this.name = name;
+    }
+    
+    /**
+     * Returns the name of this cat
+     */
+    public String getName ()
+    {
+        return name;
+    }
+    
+    /**
+     * Returns what this cat says when it speaks
+     */
+    @Override
+    public String speak ()
+    {
+        return "meow";
+    }
+}

@@ -1,0 +1,44 @@
+package asteroids.participants;
+
+import static asteroids.game.Constants.*;
+import java.awt.Shape;
+import java.awt.geom.*;
+import asteroids.game.Participant;
+import asteroids.game.ParticipantCountdownTimer;
+
+/**
+ * Represents a generic Bullet
+ */
+public abstract class Bullet extends Participant
+{
+    // The outline of a bullet
+    private Shape outline;
+
+    /**
+     * Creates a bullet at coordinates x, y, moving in the specified direction
+     * with velocity BULLET_SPEED.
+     */
+    public Bullet (double x, double y, double direction)
+    {
+        setPosition(x, y);
+        setVelocity(BULLET_SPEED, direction);
+        outline = new Ellipse2D.Double(0, 0, 1, 1);
+        new ParticipantCountdownTimer(this, this, BULLET_DURATION);
+    }
+
+    @Override
+    public Shape getOutline ()
+    {
+        return outline;
+    }
+
+    /**
+     * When BULLET_DURATION milliseconds have passed since the bullet was
+     * created, it removes itself from the game.
+     */
+    @Override
+    public void countdownComplete (Object payload)
+    {
+        Participant.expire(this);
+    }
+}

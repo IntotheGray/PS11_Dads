@@ -1,0 +1,216 @@
+package scan;
+
+import static org.junit.Assert.*;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
+import org.junit.Test;
+
+public class MyScannerGrader
+{
+    @SuppressWarnings("resource")
+    @Test
+    public void test1 ()
+    {
+        MyScanner sc = new MyScanner("");
+        assertFalse(sc.hasNext());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test2 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        assertTrue(sc.hasNext());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test3 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        assertEquals("hello", sc.next());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test4 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        assertFalse(sc.hasNextInt());
+    }
+
+    @SuppressWarnings("resource")
+    @Test(expected = InputMismatchException.class)
+    public void test5 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        sc.nextInt();
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test6 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        sc.next();
+        assertFalse(sc.hasNext());
+    }
+
+    @SuppressWarnings("resource")
+    @Test(expected = NoSuchElementException.class)
+    public void test7 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        sc.next();
+        sc.next();
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test8 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        sc.hasNextInt();
+        assertTrue(sc.hasNext());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test9 ()
+    {
+        MyScanner sc = new MyScanner("hello");
+        try
+        {
+            sc.nextInt();
+            fail();
+        }
+        catch (InputMismatchException e)
+        {
+        }
+        assertEquals("hello", sc.next());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test10 ()
+    {
+        MyScanner sc = new MyScanner("42");
+        assertTrue(sc.hasNext());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test11 ()
+    {
+        MyScanner sc = new MyScanner("42");
+        assertEquals("42", sc.next());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test12 ()
+    {
+        MyScanner sc = new MyScanner("42");
+        assertTrue(sc.hasNextInt());
+    }
+
+    @SuppressWarnings("resource")
+    @Test
+    public void test13 ()
+    {
+        MyScanner sc = new MyScanner("42");
+        assertEquals(42, sc.nextInt());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test14 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        assertTrue(sc.hasNext());
+        assertFalse(sc.hasNextInt());
+        assertEquals("abc", sc.next());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test15 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        assertTrue(sc.hasNext());
+        assertTrue(sc.hasNextInt());
+        assertEquals("77", sc.next());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test16 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        assertTrue(sc.hasNext());
+        assertTrue(sc.hasNextInt());
+        assertEquals(77, sc.nextInt());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test17 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        sc.nextInt();
+        assertTrue(sc.hasNext());
+        assertTrue(sc.hasNextInt());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test18 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        sc.nextInt();
+        assertEquals("41", sc.next());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test19 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        sc.nextInt();
+        assertEquals(41, sc.nextInt());
+    }
+    
+    @SuppressWarnings("resource")
+    @Test
+    public void test20 ()
+    {
+        MyScanner sc = new MyScanner("abc 77 41 def");
+        sc.next();
+        sc.nextInt();
+        sc.next();
+        try
+        {
+            sc.nextInt();
+            fail();
+        }
+        catch (InputMismatchException e)
+        {            
+        }
+        assertEquals("def", sc.next());
+        assertFalse(sc.hasNext());
+        assertFalse(sc.hasNextInt());
+        try
+        {
+            sc.next();
+            fail();
+        }
+        catch (NoSuchElementException e)
+        {
+        }
+    }
+}

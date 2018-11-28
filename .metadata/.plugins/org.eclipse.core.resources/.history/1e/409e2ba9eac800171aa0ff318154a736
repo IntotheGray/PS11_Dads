@@ -1,0 +1,14 @@
+package inheritance;
+
+public class Animal
+{
+    public String speak ()
+    {
+        return "";
+    }
+    
+    public String shout ()
+    {
+        return speak().toUpperCase();
+    }
+}

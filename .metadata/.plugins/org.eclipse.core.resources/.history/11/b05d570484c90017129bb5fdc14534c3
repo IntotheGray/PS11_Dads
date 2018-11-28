@@ -1,0 +1,64 @@
+package asteroids.participants;
+
+import static asteroids.game.Constants.*;
+import java.awt.Shape;
+import java.awt.geom.Path2D;
+import asteroids.game.Participant;
+import asteroids.game.ParticipantCountdownTimer;
+
+/**
+ * Represents drifting lines of various lengths.
+ */
+public class DriftingLine extends Participant
+{
+    // The line
+    private Shape outline;
+
+    /**
+     * Creates a drifting line of the given length at the specified coordinates.
+     * It has a random orientation and velocity.
+     */
+    public DriftingLine (double x, double y, double length)
+    {  
+        // Get a random double between 5 and -5.
+        double noise = RANDOM.nextDouble() * 10 - 5;
+
+        // Create the line
+        Path2D.Double line = new Path2D.Double();
+        line.moveTo(0, -length / 2);
+        line.lineTo(0, length / 2);
+
+        // Give it a random rotation, position, and velocity
+        setRotation(2 * Math.PI * RANDOM.nextDouble());
+        setPosition(x + noise, y + noise);
+        setVelocity(RANDOM.nextDouble(), RANDOM.nextDouble() * 2 * Math.PI);
+
+        // Save it
+        outline = line;
+        
+        new ParticipantCountdownTimer(this, this, 1500 + (int) (RANDOM.nextDouble() * 500));
+    }
+
+    @Override
+    protected Shape getOutline ()
+    {
+        return outline;
+    }
+
+    /**
+     * When time runs out, the DriftingLine expires.
+     */
+    @Override
+    public void countdownComplete (Object payload)
+    {
+        Participant.expire(this);        
+    }
+
+    /**
+     * DriftingLines don't interact with anything.
+     */
+    @Override
+    public void collidedWith (Participant p)
+    {  
+    }
+}

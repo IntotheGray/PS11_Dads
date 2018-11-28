@@ -1,0 +1,101 @@
+package inheritance;
+
+import java.util.ArrayList;
+import interfaces.A;
+import interfaces.B;
+import interfaces.C;
+import interfaces.Singer;
+import interfaces.Speaker;
+
+public class InheritanceDemo
+{
+    /**
+     * Demonstrates some aspects of interfaces
+     */
+    public static void main (String[] args)
+    {
+        // Create three objects
+        Animal animal1 = new Animal(3);
+        Dog dog1 = new Dog("Collie");
+        Cat cat1 = new Cat("Sheba");
+
+        // Exercise 1. Can you predict which of the method calls below will fail to compile?
+        // Uncomment each method call in turn to see if your prediction was right. If a
+        // method call does not compile, comment it back out. When you finish, predict what
+        // the program will print, then run it to see if you are right.
+
+        // a1.speak();
+        // a1.sing();
+        // b1.speak();
+        // b1.sing();
+        // c1.speak();
+        // c2.speak();
+
+        // Exercise 2. Can you predict which of the assignments below will fail to compile?
+        // Uncomment each assignment in turn to see if your prediction was right. If an
+        // assignment does not compile, comment it back out.
+
+        // Speaker sp1 = a1;
+        // Speaker sp2 = b1;
+        // Speaker sp3 = c1;
+        // Singer sn1 = a1;
+        // Singer sn2 = b1;
+        // Singer sn3 = c1;
+
+        // Exercise 3. Can you predict which of the method calls below will fail to compile?
+        // Uncomment each method call in turn to see if your prediction was right. If a
+        // method call does not compile, comment it back out. When you finish, predict what
+        // the program will print, then run it to see if you are right.
+
+        // sp1.speak();
+        // sp1.sing();
+        // sp2.speak();
+        // sp2.sing();
+        // sn1.speak();
+        // sn1.sing();
+        // sn3.speak();
+        // sn3.sing();
+
+        // Exercise 4. Can you predict which of the calls to add below will fail to compile?
+        // Uncomment each method call in turn to see if your prediction was right. If a
+        // call to add does not compile, comment it back out. When you finish, predict what
+        // the program will print, then run it to see if you are right.
+
+        ArrayList<Speaker> speakers = new ArrayList<>();
+        // speakers.add(a1);
+        // speakers.add(a2);
+        // speakers.add(b1);
+        // speakers.add(b2);
+        // speakers.add(c1);
+        // speakers.add(c2);
+        allSpeak(speakers);
+
+        // Exercise 5. Can you predict which of the calls to add below will fail to compile?
+        // Uncomment each method call in turn to see if your prediction was right. If a
+        // call to add does not compile, comment it back out. When you finish, predict what
+        // the program will print, then run it to see if you are right.
+
+        ArrayList<Singer> singers = new ArrayList<>();
+        // singers.add(a1);
+        // singers.add(a2);
+        // singers.add(b1);
+        // singers.add(b2);
+        // singers.add(c1);
+        // singers.add(c2);
+        allSing(singers);
+
+        // Exercise 6. Can you predict which of the calls to add below will fail to compile?
+        // Uncomment each method call in turn to see if your prediction was right. If a
+        // call to add does not compile, comment it back out. When you finish, predict what
+        // the program will print, then run it to see if you are right.
+
+        ArrayList<B> bSingers = new ArrayList<>();
+        // bSingers.add(a1);
+        // bSingers.add(a2);
+        // bSingers.add(b1);
+        // bSingers.add(b2);
+        // bSingers.add(c1);
+        // bSingers.add(c2);
+        allSingB(bSingers);
+    }
+}

@@ -1,0 +1,79 @@
+package interfaces;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+public class InterfaceDemo
+{
+    public static void main (String[] args)
+    {
+        A a1 = new A("hello", "when the shark bites");
+        A a2 = new A("how do?", "oh let the sun beat down upon my face");
+        B b1 = new B("bonjour");
+        B b2 = new B("salut");
+        C c1 = new C("the itsy bitsy spider");
+        C c2 = new C("happy birthday to you");
+        
+        ArrayList<Speaker> speakers = new ArrayList<>();
+        speakers.add(a1);
+        speakers.add(a2);
+        speakers.add(b1);
+        speakers.add(b2);
+        //speakers.add(c1);
+        //speakers.add(c2);
+        allSpeak(speakers);
+        
+        ArrayList<Singer> singers = new ArrayList<>();
+        singers.add(a1);
+        singers.add(a2);
+        //singers.add(b1);
+        //singers.add(b2);
+        singers.add(c1);
+        singers.add(c2);
+        allSing(singers);
+        
+        ArrayList<B> bSingers = new ArrayList<>();
+        //bSingers.add(a1);
+        //bSingers.add(a2);
+        bSingers.add(b1);
+        bSingers.add(b2);
+        //bSingers.add(c1);
+        //bSingers.add(c2);
+        allSingB(bSingers);
+    }
+    
+    private static void oneSpeak (Speaker speaker)
+    {
+        System.out.println(speaker.speak());
+    }
+
+    private static void allSpeak (ArrayList<Speaker> speakers)
+    {
+        System.out.println("Speaking:");
+        for (Speaker s: speakers)
+        {
+            System.out.println(" " + s.speak());
+        }
+        System.out.println();       
+    }
+    
+    private static void allSing (ArrayList<Singer> singers)
+    {
+        System.out.println("Singing:");
+        for (Singer s: singers)
+        {
+            System.out.println(" " + s.sing());
+        }
+        System.out.println();       
+    }
+      
+    private static void allSingB (ArrayList<B> singers)
+    {
+        System.out.println("Singing with B:");
+        for (B s: singers)
+        {
+            System.out.println(" " + s.sing());
+        }
+        System.out.println(); 
+    }
+}

@@ -1,0 +1,90 @@
+package graders;
+
+import static org.junit.Assert.*;
+import java.io.File;
+import java.net.URISyntaxException;
+import org.junit.Test;
+import files.FileSystem;
+
+public class FileSystemGrader
+{
+    private File demo;
+    private File folder1;
+    private File folder4;
+    private File document1;
+    
+    public FileSystemGrader () throws URISyntaxException
+    {
+        demo = new File(System.getProperty("user.dir") + "/demo");
+        folder1 = new File(System.getProperty("user.dir") + "/demo/folder1");
+        folder4 = new File(System.getProperty("user.dir") + "/demo/folder4");
+        document1 = new File(System.getProperty("user.dir") + "/demo/document1.txt");
+    }
+
+    @Test
+    public void depthTest1 ()
+    {
+        assertEquals(7, FileSystem.depth(demo));
+    }
+    
+    @Test
+    public void depthTest2 ()
+    {
+        assertEquals(6, FileSystem.depth(folder1));
+    }
+    
+    @Test
+    public void depthTest3 ()
+    {
+        assertEquals(3, FileSystem.depth(folder4));
+    }
+    
+    @Test
+    public void depthTest4 ()
+    {
+        assertEquals(1, FileSystem.depth(document1));
+    }
+    
+    
+    @Test
+    public void countFoldersTest1 ()
+    {
+        assertEquals(12, FileSystem.countFolders(demo));
+    }
+    
+    @Test
+    public void countFoldersTest2 ()
+    {
+        assertEquals(5, FileSystem.countFolders(folder1));
+    }
+    
+    @Test
+    public void countFoldersTest3 ()
+    {
+        assertEquals(4, FileSystem.countFolders(folder4));
+    }
+    
+    @Test
+    public void countFoldersTest4 ()
+    {
+        assertEquals(0, FileSystem.countFolders(document1));
+    }
+
+    @Test
+    public void searchByNameTest1 ()
+    {
+        assertTrue(FileSystem.searchByName(demo, "folder1.1.1.1"));
+    }
+    
+    @Test
+    public void searchByNameTest2 ()
+    {
+        assertFalse(FileSystem.searchByName(folder1, "folder1.1.1.1"));
+    }
+    
+    @Test
+    public void searchByNameTest3 ()
+    {
+        assertTrue(FileSystem.searchByName(folder4, "document4.1.1.txt"));
+    }
+}

@@ -1,0 +1,20 @@
+package interfaces;
+
+public class English implements Speaker, Singer
+{
+    public English ()
+    {
+    }
+    
+    @Override
+    public String sing ()
+    {
+        return "When the shark bites";
+    }
+
+    @Override
+    public String speak ()
+    {
+        return "Hello";
+    } 
+}

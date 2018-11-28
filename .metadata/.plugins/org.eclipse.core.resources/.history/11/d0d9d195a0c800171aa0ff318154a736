@@ -1,0 +1,15 @@
+package interfaces;
+
+public class Spanish implements Singer
+{
+    public Spanish ()
+    {
+    }
+    
+    @Override
+    public String sing ()
+    {
+        return "When the shark bites";
+    }
+
+}

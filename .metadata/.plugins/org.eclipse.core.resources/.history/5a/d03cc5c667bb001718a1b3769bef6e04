@@ -1,0 +1,104 @@
+package scan;
+
+import java.util.NoSuchElementException;
+
+/**
+ * Provides a stripped-down version of java.util.Scanner.
+ * 
+ * @author Joseph Zachary
+ */
+public class MyScanner
+{
+    /**
+     * The tokens that made up the string that was originally passed to the constructor. The string is broken into
+     * tokens by splitting at white-space sequences.
+     */
+    private String[] tokens;
+
+    /**
+     * The number of tokens that have been successfully returned to the user. The next token is thus tokens[index]. It
+     * follows that 0 <= index < tokens.length.
+     */
+    private int index;
+
+    /**
+     * Creates a MyScanner that takes its tokens from s.
+     */
+    public MyScanner (String s)
+    {
+        // No tokens have been consumed yet
+        index = 0;
+
+        // Split up the string into tokens. We treat the empty string as a special
+        // case because otherwise we'd end up with a one-token array.
+        s = s.trim();
+        if (s.length() == 0)
+        {
+            tokens = new String[0];
+        }
+        else
+        {
+            tokens = s.split("\\s+");
+        }
+    }
+
+    /**
+     * Reports whether there is another token.
+     */
+    public boolean hasNext ()
+    {
+        return index < tokens.length;
+    }
+
+    /**
+     * Returns the next token. If there isn't one, throws a NoSuchElementException.
+     * 
+     * @return
+     */
+    public String next ()
+    {
+        if (hasNext())
+        {
+            index++;
+            return tokens[index - 1];
+        }
+        else
+        {
+            throw new NoSuchElementException();
+        }
+    }
+
+    /**
+     * Reports whether there is a next token and whether that token is an int literal.
+     */
+    public boolean hasNextInt ()
+    {
+        try
+        {
+            Integer.parseInt(tokens[index]);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the next token after converting it to an int.  If there is no next token,
+     * throws a NoSuchElementException.  If the token is not an int literal, throws a
+     * InputMismatchException.
+     */
+    public int nextInt ()
+    {
+        String token = next();
+        try
+        {
+            return Integer.parseInt(token);
+        }
+        catch (NumberFormatException e)
+        {
+            throw new InputMismatchException();
+        }
+    }
+}

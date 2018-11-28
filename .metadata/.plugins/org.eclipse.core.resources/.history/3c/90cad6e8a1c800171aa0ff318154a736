@@ -1,0 +1,33 @@
+package interfaces;
+
+import java.util.ArrayList;
+
+public class InterfaceDemo
+{
+    public static void main (String[] args)
+    {
+        English english1 = new English("Hello", "When the shark bites");
+        English english2 = new English("How do?", "Oh let the sun beat down upon my face");
+        
+        ArrayList<Speaker> speakers = new ArrayList<>();
+        speakers.add(english1);
+        speakers.add(english2);
+        allSpeak(speakers);
+        
+        ArrayList<Speaker> singers = new ArrayList<>();
+        singers.add(english1);
+        singers.add(english2);
+        allSpeak(speakers);
+    }
+
+    private static void allSpeak (ArrayList<Speaker> speakers)
+    {
+        for (Speaker s: speakers)
+        {
+            System.out.println(s.speak());
+        }
+        System.out.println();       
+    }
+    
+    
+}

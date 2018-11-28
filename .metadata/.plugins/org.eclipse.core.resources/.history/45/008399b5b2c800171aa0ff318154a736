@@ -1,0 +1,29 @@
+package interfaces;
+
+/**
+ * A B object knowss how to speak and sing 
+ */
+public class B implements Speaker
+{
+    /** What the object says when it speaks */
+    private String greeting;
+    
+    /**
+     * Creates a B object that speaks the greeting */
+     */
+    public B (String greeting)
+    {
+        this.greeting = greeting;
+    }
+
+    @Override
+    public String speak ()
+    {
+        return greeting;
+    } 
+    
+    public String sing ()
+    {
+        return "tra la la " + greeting;
+    }
+}

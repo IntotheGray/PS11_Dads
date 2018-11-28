@@ -1,0 +1,227 @@
+package asteroids.participants;
+
+import static asteroids.game.Constants.*;
+import java.awt.Shape;
+import java.awt.geom.*;
+import asteroids.destroyers.AlienShipDestroyer;
+import asteroids.destroyers.AsteroidDestroyer;
+import asteroids.destroyers.SBulletDestroyer;
+import asteroids.destroyers.ShipDestroyer;
+import asteroids.game.Controller;
+import asteroids.game.Participant;
+import asteroids.game.ParticipantCountdownTimer;
+
+/**
+ * Represents Alien Ship objects
+ */
+public class AlienShip extends Participant //implements AsteroidDestroyer, SBulletDestroyer, ShipDestroyer
+{
+    // The outline of the ship
+    private Shape outline;
+    
+    // Size of the ship
+    private int size;
+    
+    // Game controller
+    private Controller controller;
+    
+    // True if the ship should change direction at the next move
+    boolean changeDirection = false;
+    
+    /**
+     * Constructs a ship of the specified size (1 = large, 0 = small)
+     */
+    public AlienShip (int size, Controller controller)
+    {
+        // Make sure size is in bounds
+        if (size < 0 || size > 1)
+        {
+            throw new IllegalArgumentException("Invalid alien ship size " + size);
+        }
+        
+        // Record size and controller
+        this.size = size;
+        this.controller = controller;
+        
+        // Make the outline
+        Path2D.Double poly = new Path2D.Double();
+        poly.moveTo(20, 0);
+        poly.lineTo(9, 9);
+        poly.lineTo(-9, 9);
+        poly.lineTo(-20, 0);
+        poly.lineTo(20, 0);
+        poly.lineTo(-20, 0);
+        poly.lineTo(-9, -9);
+        poly.lineTo(9, -9);
+        poly.lineTo(-9, -9);
+        poly.lineTo(-5, -17);
+        poly.lineTo(5, -17);
+        poly.lineTo(9, -9);
+        poly.closePath();
+        outline = poly;
+        
+        // Scale to the desired size
+        double scale = ALIENSHIP_SCALE[size];
+        poly.transform(AffineTransform.getScaleInstance(scale, scale));
+        
+        // Arrange for a shot in 1.5 seconds
+        new ParticipantCountdownTimer(this, "shoot", 1500);
+        
+        // Arrange to change direction in 1 second
+        new ParticipantCountdownTimer(this, "change", 1000);
+        
+        // Play the sound
+        if (getSize() == 1)
+        {
+            getSounds().startLoop("saucerBig");
+        }
+        else
+        {
+            getSounds().startLoop("saucerSmall");
+        }
+    }
+    
+    @Override
+    protected Shape getOutline ()
+    {
+        return outline;
+    }
+    
+    /**
+     * Returns the size of the alien ship
+     */
+    public int getSize ()
+    {
+        return size;
+    }
+    
+    /**
+     * Called when a timer has counted down, and either shoots or changes direction depending on the payload.
+     */
+    @Override
+    public void countdownComplete (Object payload)
+    {
+        // It is time to shoot
+        if (("shoot").equals(payload))
+        {
+            Ship ship = controller.getShip();
+            if (ship != null)
+            {
+                fireBullet();
+                getSounds().play("fire");
+                new ParticipantCountdownTimer(this, "shoot", 1500);
+            }
+        }
+        // It is time to change direction
+        else if ("change".equals(payload))
+        {
+            changeDirection = true;
+        }
+    }
+    
+    /**
+     * Customizes the motion of the ship by causing it to change direction periodically.
+     */
+    @Override
+    public void move ()
+    {
+        // Do base move
+        super.move();
+        
+        // Time to change direction
+        if (changeDirection)
+        {
+            // Change change direction request
+            changeDirection = false;
+            
+            // Choose randomly between horizontal and plus or
+            // minus one radian.
+            if (Math.cos(getDirection()) > 0)
+            {
+                setDirection(RANDOM.nextInt(3) - 1);
+            }
+            else
+            {
+                setDirection(Math.PI + RANDOM.nextInt(3) - 1);
+            }
+            
+            // Schedule a new change of direction in one second
+            new ParticipantCountdownTimer(this, "change", 1000);
+        }
+    }
+    
+    /**
+     * Fires a bullet.
+     */
+    public void fireBullet ()
+    {
+        ABullet b = new ABullet(getX(), getY(), getShootingDirectionToShip());
+        b.setSpeed(BULLET_SPEED);
+        controller.addParticipant(b);
+    }
+    
+    /**
+     * Determines the direction to shoot
+     */
+    public double getShootingDirectionToShip ()
+    {
+        // The large ship shoots at random
+        if (size == 1)
+        {
+            return RANDOM.nextDouble() * 2 * Math.PI;
+        }
+        // The small ship shoots within five degrees of perfect
+        else
+        {
+            Ship ship = controller.getShip();
+            double deltaX = ship.getX() - getX();
+            double deltaY = ship.getY() - getY();
+            double distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+            double direction = Math.acos(deltaX / distance);
+            direction = (deltaY > 0) ? direction : -direction;
+            double delta = 5 * Math.PI / 180;
+            direction = RANDOM.nextDouble() * 2*delta + direction - delta;
+            return direction;
+        }
+    }
+    
+    /**
+     * Removes the alien ship from play.
+     */
+    public void remove ()
+    {
+        Participant.expire(this);
+        if (getSize() == 1)
+        {
+            getSounds().stopLoop("saucerBig");
+        }
+        else
+        {
+            getSounds().stopLoop("saucerSmall");
+        }
+    }
+    
+    /**
+     * When an AlienShip collides with a AlienShipKiller, it expires.
+     */
+    @Override
+    public void collidedWith (Participant p)
+    {
+        if (p instanceof AlienShipDestroyer)
+        {
+            // Get rid of the ship and play the sound
+            remove();
+            getSounds().play("bangAlienShip");
+            
+            // Display some debris that will quickly disappear
+            controller.addParticipant(new DriftingLine(getX(), getY(), 10 * (size + 1)));
+            controller.addParticipant(new DriftingLine(getX(), getY(), 10 * (size + 1)));
+            controller.addParticipant(new DriftingLine(getX(), getY(), 10 * (size + 1)));
+            controller.addParticipant(new DriftingLine(getX(), getY(), 10 * (size + 1)));
+            controller.addParticipant(new DriftingLine(getX(), getY(), 5 * (size + 1)));
+            controller.addParticipant(new DriftingLine(getX(), getY(), 5 * (size + 1)));
+            
+            controller.alienShipDestroyed(size);
+        }
+    }
+}

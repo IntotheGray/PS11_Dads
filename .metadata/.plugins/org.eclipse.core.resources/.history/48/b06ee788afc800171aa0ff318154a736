@@ -1,0 +1,17 @@
+package interfaces;
+
+public class French implements Speaker
+{
+    private String greeting;
+    
+    public French (String greeting)
+    {
+        this.greeting = greeting;
+    }
+
+    @Override
+    public String speak ()
+    {
+        return greeting;
+    } 
+}

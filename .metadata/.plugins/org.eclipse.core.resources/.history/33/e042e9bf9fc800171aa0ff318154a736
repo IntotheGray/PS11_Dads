@@ -1,0 +1,8 @@
+package interfaces;
+
+public interface Vocalizer
+{
+    public String speak ();
+    
+    public String sing ();
+}

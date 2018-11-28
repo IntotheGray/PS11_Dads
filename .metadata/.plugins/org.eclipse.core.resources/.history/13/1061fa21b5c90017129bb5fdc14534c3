@@ -1,0 +1,233 @@
+package asteroids.participants;
+
+import static asteroids.game.Constants.*;
+import java.awt.Shape;
+import java.awt.geom.*;
+import asteroids.destroyers.ABulletDestroyer;
+import asteroids.destroyers.AlienShipDestroyer;
+import asteroids.destroyers.AsteroidDestroyer;
+import asteroids.destroyers.SBulletDestroyer;
+import asteroids.destroyers.ShipDestroyer;
+import asteroids.game.Controller;
+import asteroids.game.Participant;
+
+/**
+ * Represents asteroids
+ */
+public class Asteroid extends Participant implements SBulletDestroyer, ABulletDestroyer, ShipDestroyer, AlienShipDestroyer
+{
+    // The size of the asteroid (0 = small, 1 = medium, 2 = large)
+    private int size;
+
+    // The outline of the asteroid
+    private Shape outline;
+
+    // The game controller
+    private Controller controller;
+
+    /**
+     * Throws an IllegalArgumentException if size or variety is out of range.
+     * 
+     * Creates an asteroid of the specified variety (0 through 3) and size (0 =
+     * small, 1 = medium, 2 = large) and positions it at the provided
+     * coordinates with a random rotation. Its speed is chosen randomly
+     * based on its size, and its direction is chosen randomly.
+     */
+    public Asteroid (int variety, int size, double x, double y, Controller controller)
+    {
+        createAsteroid(variety, size, x, y, controller, Double.MAX_VALUE);
+    }
+    
+    public Asteroid (int variety, int size, double x, double y, Controller controller, double direction)
+    {
+        createAsteroid(variety, size, x, y, controller, direction);
+    }
+    
+    /**
+     * Creates a large asteroid near the designed corner (TL, BL, TR, BR).
+     */
+    public Asteroid (int variety, String corner, Controller controller)
+    {
+        double xDelta = EDGE_OFFSET * (RANDOM.nextDouble() + 0.5);
+        double yDelta = EDGE_OFFSET * (RANDOM.nextDouble() + 0.5);
+        double x = (corner.equals("TL") || corner.equals("BL")) ? xDelta : SIZE - xDelta;
+        double y = (corner.equals("TL") || corner.equals("TR")) ? yDelta : SIZE - yDelta;
+        createAsteroid(variety, 2, x, y, controller, Double.MAX_VALUE);       
+    }
+    
+    /**
+     * Initializes an asteroid of the given variety, size, and position with a random 
+     * rotation and direction.  The speed is chosen randomly based on its size.
+     */
+    private void createAsteroid (int variety, int size, double x, double y, Controller controller, double previousDirection)
+    {
+        // Make sure size and variety are valid
+        if (size < 0 || size > 2)
+        {
+            throw new IllegalArgumentException("Invalid asteroid size: " + size);
+        }
+        else if (variety < 0 || variety > 3)
+        {
+            throw new IllegalArgumentException();
+        }
+        
+        // Choose the speed
+        double speed;
+        if (size == 2)
+        {
+            speed = MINIMUM_ASTEROID_SPEED;
+        }
+        else if (size == 1)
+        {
+            speed = RANDOM.nextDouble() * (MEDIUM_ASTEROID_SPEED - MINIMUM_ASTEROID_SPEED) + MINIMUM_ASTEROID_SPEED;
+        }
+        else
+        {
+            speed = RANDOM.nextDouble() * (MAXIMUM_ASTEROID_SPEED - MINIMUM_ASTEROID_SPEED) + MINIMUM_ASTEROID_SPEED;
+        }
+        
+        // Create the asteroid
+        this.controller = controller;
+        this.size = size;
+        setPosition(x, y);
+        
+        // Avoid a direction too close to the previous direction, if provided
+        double direction;
+        do
+        {
+            direction = RANDOM.nextDouble() * 2 * Math.PI;
+        }
+        while (Math.abs(direction-previousDirection) < 0.3);
+
+        setVelocity(speed, direction);
+        setRotation(2 * Math.PI * RANDOM.nextDouble());
+        createAsteroidOutline(variety, size);
+    }
+
+    @Override
+    protected Shape getOutline ()
+    {
+        return outline;
+    }
+
+    /**
+     * Creates the outline of the asteroid based on its variety and size.
+     */
+    private void createAsteroidOutline (int variety, int size)
+    {
+        // This will contain the outline
+        Path2D.Double poly = new Path2D.Double();
+
+        // Fill out according to variety
+        if (variety == 0)
+        {
+            poly.moveTo(0, -30);
+            poly.lineTo(28, -15);
+            poly.lineTo(20, 20);
+            poly.lineTo(4, 8);
+            poly.lineTo(-1, 30);
+            poly.lineTo(-12, 15);
+            poly.lineTo(-5, 2);
+            poly.lineTo(-25, 7);
+            poly.lineTo(-10, -25);
+            poly.closePath();
+        }
+        else if (variety == 1)
+        {
+            poly.moveTo(10, -28);
+            poly.lineTo(7, -16);
+            poly.lineTo(30, -9);
+            poly.lineTo(30, 9);
+            poly.lineTo(10, 13);
+            poly.lineTo(5, 30);
+            poly.lineTo(-8, 28);
+            poly.lineTo(-6, 6);
+            poly.lineTo(-27, 12);
+            poly.lineTo(-30, -11);
+            poly.lineTo(-6, -15);
+            poly.lineTo(-6, -28);
+            poly.closePath();
+        }
+        else if (variety == 2)
+        {
+            poly.moveTo(10, -30);
+            poly.lineTo(30, 0);
+            poly.lineTo(15, 30);
+            poly.lineTo(0, 15);
+            poly.lineTo(-15, 30);
+            poly.lineTo(-30, 0);
+            poly.lineTo(-10, -30);
+            poly.closePath();
+        }
+        else
+        {
+            poly.moveTo(30, -18);
+            poly.lineTo(5, 5);
+            poly.lineTo(30, 15);
+            poly.lineTo(15, 30);
+            poly.lineTo(0, 25);
+            poly.lineTo(-15, 30);
+            poly.lineTo(-25, 8);
+            poly.lineTo(-10, -25);
+            poly.lineTo(0, -30);
+            poly.lineTo(10, -30);
+            poly.closePath();
+        }
+
+        // Scale to the desired size
+        double scale = ASTEROID_SCALE[size];
+        poly.transform(AffineTransform.getScaleInstance(scale, scale));
+
+        // Save the outline
+        outline = poly;
+    }
+
+    /**
+     * Returns the size of the asteroid
+     */
+    public int getSize ()
+    {
+        return size;
+    }
+
+    /**
+     * When an Asteroid collides with an AsteroidDestroyer, it expires.
+     */
+    @Override
+    public void collidedWith (Participant p)
+    {
+        if (p instanceof AsteroidDestroyer)
+        {
+            // Expire the asteroid
+            Participant.expire(this);
+
+            // Some debris appears and disappears quickly
+            for (int i = 0; i < 4; i++)
+            {
+                controller.addParticipant(new DriftingLine(getX(), getY(), 1));
+            }
+            
+            // Pay the appropriate sound
+            switch (getSize())
+            {
+                case 2: getSounds().play("bangLarge"); break;
+                case 1: getSounds().play("bangMedium"); break;
+                case 0: getSounds().play("bangSmall"); break;
+            }
+
+            // Create two smaller asteroids. Put them at the same position
+            // as the one that was just destroyed and give them a random
+            // direction.
+            int size = getSize() - 1;
+            if (size >= 0)
+            {
+                Asteroid first;
+                controller.addParticipant(first = new Asteroid(RANDOM.nextInt(4), size, getX(), getY(), controller));
+                controller.addParticipant(new Asteroid(RANDOM.nextInt(4), size, getX(), getY(), controller, first.getDirection()));
+            }
+            
+            // Inform the controller
+            controller.asteroidDestroyed(size+1);
+        }
+    }
+}

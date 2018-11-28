@@ -1,0 +1,117 @@
+package asteroids.game;
+
+import javax.swing.*;
+import static asteroids.game.Constants.*;
+import java.awt.*;
+
+/**
+ * Defines the top-level appearance of an Asteroids game.
+ */
+@SuppressWarnings("serial")
+public class Display extends JFrame
+{
+    // For displaying level, score, and lives left
+    private JLabel levelLabel;
+    //private JLabel scoreLabel;
+    //private JLabel livesLabel;
+    
+    // The area where the action takes place
+    private Screen screen;
+
+    /**
+     * Lays out the game and creates the controller
+     */
+    public Display (Controller controller)
+    {
+        // Title at the top
+        setTitle(TITLE);
+
+        // Default behavior on closing
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // The main playing area and the controller
+        screen = new Screen(controller);
+        
+        // This panel contains the screen to prevent the screen from being
+        // resized
+        JPanel screenPanel = new JPanel();
+        screenPanel.setLayout(new GridBagLayout());
+        screenPanel.add(screen);
+
+        // This panel contains buttons and labels
+        JPanel controls = new JPanel();
+        controls.setLayout(new GridLayout(1,2));
+        JPanel left = new JPanel();
+        JPanel right = new JPanel();
+        controls.add(left);
+        controls.add(right);
+
+        // The button that starts the game
+        JButton startGame = new JButton(START_LABEL);
+        left.add(startGame);
+
+        // Displays the game level
+        levelLabel = new JLabel();
+        right.add(levelLabel);
+        
+        // Displays the number of lives that are left
+        //livesLabel = new JLabel();
+        //right.add(livesLabel);
+
+        // Displays the score
+        //scoreLabel = new JLabel();
+        //right.add(scoreLabel);
+
+        // Organize everything
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(screenPanel, "Center");
+        mainPanel.add(controls, "North");
+        setContentPane(mainPanel);
+        pack();
+
+        // Connect the controller to the start button
+        startGame.addActionListener(controller);
+    }
+    
+    /**
+     * Called when it is time to update the screen display. This is what drives
+     * the animation.
+     */
+    public void refresh ()
+    {
+        screen.repaint();
+    }
+    
+    /**
+     * Changes the level display
+     */
+    public void setLevel (int n)
+    {
+        levelLabel.setText("  Level: " + n);
+    }
+
+    /**
+     * Changes the lives left display
+     */
+    public void setLives (int n)
+    {
+        screen.setLives(n);
+    }
+
+    /**
+     * Changes the score display
+     */
+    public void setScore (int n)
+    {
+        screen.setScore(n);
+    }
+    
+    /**
+     * Sets the large legend
+     */
+    public void setLegend (String s)
+    {
+        screen.setLegend(s);
+    }
+}

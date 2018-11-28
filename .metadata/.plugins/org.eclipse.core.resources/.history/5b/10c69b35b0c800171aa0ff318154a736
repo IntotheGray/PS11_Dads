@@ -1,0 +1,61 @@
+package interfaces;
+
+import java.util.ArrayList;
+
+public class InterfaceDemo
+{
+    public static void main (String[] args)
+    {
+        A english1 = new A("Hello", "When the shark bites");
+        A english2 = new A("How do?", "Oh let the sun beat down upon my face");
+        
+        ArrayList<Speaker> speakers = new ArrayList<>();
+        speakers.add(english1);
+        speakers.add(english2);
+        allSpeak(speakers);
+        
+        ArrayList<Singer> singers = new ArrayList<>();
+        singers.add(english1);
+        singers.add(english2);
+        allSing(singers);
+    }
+    
+    private static void oneSpeak (Speaker speaker)
+    {
+        System.out.println(speaker.speak());
+    }
+
+    private static void allSpeak (ArrayList<Speaker> speakers)
+    {
+        for (Speaker s: speakers)
+        {
+            System.out.println(s.speak());
+        }
+        System.out.println();       
+    }
+    
+    private static void oneSing (Singer singer)
+    {
+        System.out.println(singer.sing());
+    }
+    
+    private static void allSing (ArrayList<B> singers)
+    {
+        for (B s: singers)
+        {
+            System.out.println(s.sing());
+        }
+        System.out.println(); 
+    }
+    
+    private static void allSing (ArrayList<Singer> singers)
+    {
+        for (Singer s: singers)
+        {
+            System.out.println(s.sing());
+        }
+        System.out.println();       
+    }
+    
+    
+}

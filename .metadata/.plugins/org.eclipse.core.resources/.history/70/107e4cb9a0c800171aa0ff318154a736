@@ -1,0 +1,14 @@
+package interfaces;
+
+public class French implements Speaker
+{
+    public French ()
+    {
+    }
+
+    @Override
+    public String speak ()
+    {
+        return "Hello";
+    } 
+}
