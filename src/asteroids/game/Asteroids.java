@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * The main class for the application.
+ * @author Eric J. Marsh, Jack Ronnie
  */
 public class Asteroids
 {
