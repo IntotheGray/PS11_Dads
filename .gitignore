@@ -5,3 +5,4 @@ bin/asteroids/participants/Bullet.class
 *.class
 *.class
 bin/asteroids/game/Controller.class
+*.class
