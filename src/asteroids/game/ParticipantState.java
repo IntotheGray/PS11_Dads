@@ -5,12 +5,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import asteroids.participants.Asteroid;
+import asteroids.participants.Bullet;
 
 /**
  * Keeps track of the Participants, their motions, and their collisions.
  */
 public class ParticipantState
 {
+    
     /** The participants (asteroids, ships, etc.) that are involved in the game */
     private LinkedList<Participant> participants;
 
@@ -79,6 +81,17 @@ public class ParticipantState
         return count;
     }
 
+    public int bulletCount ()
+    {
+        int count = 0;
+        for (Participant p: participants)
+            if (p instanceof Bullet && !p.isExpired())
+            {
+                count++;
+            }
+        return count;
+    }
+    
     /**
      * Moves each of the active participants to simulate the passage of time.
      */
@@ -100,6 +113,8 @@ public class ParticipantState
 
         // Deal with pending adds and expirations
         completeAddsAndRemoves();
+        
+
     }
 
     /**
@@ -153,4 +168,5 @@ public class ParticipantState
             }
         }
     }
+    
 }
