@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.Iterator;
 import javax.swing.*;
 import asteroids.participants.Asteroid;
+import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
 
 /**
@@ -17,6 +18,9 @@ public class Controller implements KeyListener, ActionListener
 
     /** The ship (if one is active) or null (otherwise) */
     private Ship ship;
+
+    /** The bullet (if one is active) */
+    private Bullet bullet;
 
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
@@ -107,6 +111,12 @@ public class Controller implements KeyListener, ActionListener
         addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
     }
 
+    private void placeBullet ()
+    {
+        bullet = new Bullet(ship.getXNose(), ship.getYNose(), ship.getRotation(), this, ship);
+        addParticipant(bullet);
+    }
+
     /**
      * Clears the screen so that nothing is displayed
      */
@@ -178,6 +188,14 @@ public class Controller implements KeyListener, ActionListener
         {
             scheduleTransition(END_DELAY);
         }
+    }
+
+    /**
+     * A bullet has been destroyed
+     */
+    public void bulletDestroyed ()
+    {
+
     }
 
     /**
@@ -253,6 +271,20 @@ public class Controller implements KeyListener, ActionListener
         {
             ship.turnRight();
         }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        {
+            ship.turnLeft();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        {
+            ship.accelerate();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
+        {
+            placeBullet();
+            bullet.shoot();
+        }
+
     }
 
     /**
