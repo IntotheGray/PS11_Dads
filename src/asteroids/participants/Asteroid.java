@@ -154,10 +154,4 @@ public class Asteroid extends Participant implements ShipDestroyer,BulletDestroy
         }
     }
 
-    @Override
-    public void maxRange (Participant p)
-    {
-        // TODO Auto-generated method stub
-        
-    }
 }
