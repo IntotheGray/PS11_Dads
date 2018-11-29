@@ -25,6 +25,13 @@ public class Controller implements KeyListener, ActionListener
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
 
+    private boolean turningRight;
+    
+    private boolean turningLeft;
+    
+    private boolean accelerating;
+    
+    private boolean firing;
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
      * in the future to give the user time to see what has happened before doing something like going to a new level or
@@ -222,12 +229,31 @@ public class Controller implements KeyListener, ActionListener
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {
+            if (turningRight == true)
+            {
+                ship.turnRight();
+            }
+            if (turningLeft == true)
+            {
+                ship.turnLeft();
+            }
+            if (accelerating == true)
+            {
+                ship.accelerate();
+            }
+            if (firing == true)
+            {
+                placeBullet();
+                bullet.shoot();
+            }
             // It may be time to make a game transition
             performTransition();
 
+            
             // Move the participants to their new locations
             pstate.moveParticipants();
 
+            
             // Refresh screen
             display.refresh();
         }
@@ -269,20 +295,26 @@ public class Controller implements KeyListener, ActionListener
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
-            ship.turnRight();
+            //ship.turnRight();
+            turningRight = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
         {
-            ship.turnLeft();
+            //ship.turnLeft();
+            turningLeft = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
         {
-            ship.accelerate();
+            //ship.accelerate();
+            
+            accelerating = true;
+            
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
         {
-            placeBullet();
-            bullet.shoot();
+            //placeBullet();
+            //bullet.shoot();
+            firing = true;
         }
 
     }
@@ -301,5 +333,28 @@ public class Controller implements KeyListener, ActionListener
     @Override
     public void keyReleased (KeyEvent e)
     {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
+        {
+            //ship.turnRight();
+            turningRight = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        {
+            //ship.turnLeft();
+            turningLeft = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        {
+            //ship.accelerate();
+            
+            accelerating = false;
+            
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
+        {
+            //placeBullet();
+            //bullet.shoot();
+            firing = false;
+        }
     }
 }
