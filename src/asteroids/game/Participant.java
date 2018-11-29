@@ -233,6 +233,7 @@ public abstract class Participant
      */
     public abstract void collidedWith (Participant p);
 
+    
     /**
      * This method is called when a {@link asteroids.game.ParticipantCountdownTimer} that was constructed for this
      * Participant completes its countdown, so long as this Participant is not expired. The method should take
@@ -315,4 +316,5 @@ public abstract class Participant
         }
         g.draw(border);
     }
+
 }
