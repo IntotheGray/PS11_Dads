@@ -122,11 +122,13 @@ public class Controller implements KeyListener, ActionListener
 
     private void placeBullet ()
     {
-        if (numBullets < 8)
+        if (pstate.bulletCount() < 8)
         {
+            
             bullet = new Bullet(ship.getXNose(), ship.getYNose(), ship.getRotation(), this, ship);
             addParticipant(bullet);
-            numBullets = numBullets + 1;
+            
+           
         }
 
     }
@@ -204,6 +206,7 @@ public class Controller implements KeyListener, ActionListener
         }
     }
 
+    
     /**
      * A bullet has been destroyed
      */
@@ -236,6 +239,7 @@ public class Controller implements KeyListener, ActionListener
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {
+            
             if (turningRight == true)
             {
                 ship.turnRight();
