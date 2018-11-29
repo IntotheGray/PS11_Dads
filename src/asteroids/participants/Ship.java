@@ -125,10 +125,11 @@ public class Ship extends Participant implements AsteroidDestroyer
     {
         // Give a burst of acceleration, then schedule another
         // burst for 200 msecs from now.
-        if (payload.equals("move"))
+        /*if (payload.equals("move"))
         {
             accelerate();
             new ParticipantCountdownTimer(this, "move", 200);
         }
+        */
     }
 }
