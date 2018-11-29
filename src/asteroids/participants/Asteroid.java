@@ -1,9 +1,11 @@
 package asteroids.participants;
 
 import static asteroids.game.Constants.*;
+
 import java.awt.Shape;
 import java.awt.geom.*;
 import asteroids.destroyers.AsteroidDestroyer;
+import asteroids.destroyers.BulletDestroyer;
 import asteroids.destroyers.ShipDestroyer;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
@@ -11,7 +13,7 @@ import asteroids.game.Participant;
 /**
  * Represents asteroids
  */
-public class Asteroid extends Participant implements ShipDestroyer
+public class Asteroid extends Participant implements ShipDestroyer,BulletDestroyer
 {
     /** The size of the asteroid (0 = small, 1 = medium, 2 = large) */
     private int size;
@@ -146,7 +148,7 @@ public class Asteroid extends Participant implements ShipDestroyer
         {
             // Expire the asteroid
             Participant.expire(this);
-
+            
             // Inform the controller
             controller.asteroidDestroyed();
         }
