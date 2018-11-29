@@ -253,6 +253,16 @@ public class Controller implements KeyListener, ActionListener
         {
             ship.turnRight();
         }
+        
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        {
+            ship.turnLeft();
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        {
+            ship.accelerate();
+        }
     }
 
     /**
