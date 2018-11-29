@@ -46,7 +46,7 @@ public class Constants
     /**
      * The number of milliseconds between the beginnings of frame refreshes
      */
-    public final static int FRAME_INTERVAL = 33;
+    public final static int FRAME_INTERVAL = 60;
     
     /**
      * The number of milliseconds between beats, initially.
