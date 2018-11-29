@@ -1,0 +1,5 @@
+
+bin/asteroids/destroyers/BulletDestroyer.class
+bin/asteroids/participants/Bullet.class
+*.class
+*.class
