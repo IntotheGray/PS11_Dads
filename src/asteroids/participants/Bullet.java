@@ -18,11 +18,16 @@ public class Bullet extends Participant implements AsteroidDestroyer
     private Ship ship;
     private Shape outline;
     private double direction;
+    private double XPosition, YPosition;
+    
     public Bullet (double x, double y,double Direction, Controller controller, Ship ship)
     {
+        
         this.direction = Direction;
         this.controller = controller;
         this.ship = ship;
+        XPosition = x;
+        YPosition = y;
         setPosition(x,y);
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1,0);
@@ -36,11 +41,19 @@ public class Bullet extends Participant implements AsteroidDestroyer
         
         
     }
+    public void expireB()
+    {
+        Participant.expire(this);
+        controller.bulletDestroyed();
+    }
+
+    
     public void shoot()
     {   
         
-        setSpeed(BULLET_SPEED);
+        setSpeed(BULLET_SPEED + ship.getSpeed());
         setDirection(direction);
+        new ParticipantCountdownTimer(this, "travelTime" ,3000);
         //accelerate(SHIP_ACCELERATION);
         
         //move();
@@ -60,10 +73,24 @@ public class Bullet extends Participant implements AsteroidDestroyer
     {
         if (p instanceof BulletDestroyer)
         {
-            Participant.expire(this);
-            controller.bulletDestroyed();
+            expireB();
         }
         
+    }
+    
+
+    public void maxRange (Participant p)
+    {
+        Participant.expire(this);
+        controller.bulletDestroyed();
+    }
+    @Override 
+    public void countdownComplete(Object payload)
+    {
+        if (payload.equals("travelTime"))
+        {
+            expireB();
+        }
     }
 
 }
