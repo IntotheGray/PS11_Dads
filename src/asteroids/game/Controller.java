@@ -7,6 +7,7 @@ import javax.swing.*;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
+import asteroids.participants.Debris;
 
 /**
  * Controls a game of Asteroids.
@@ -21,6 +22,8 @@ public class Controller implements KeyListener, ActionListener
 
     /** The bullet (if one is active) */
     private Bullet bullet;
+    
+    private Debris debris;
 
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
@@ -135,6 +138,23 @@ public class Controller implements KeyListener, ActionListener
         }
 
     }
+    
+    /**
+     * Given xy place debris
+     * @param x
+     * @param y
+     */
+    private void placeDebris (double x , double y)
+    {
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+    }
 
     /**
      * Clears the screen so that nothing is displayed
@@ -184,6 +204,7 @@ public class Controller implements KeyListener, ActionListener
      */
     public void shipDestroyed ()
     {
+        placeDebris(ship.getX(), ship.getY());
         // Null out the ship
         ship = null;
 
@@ -204,6 +225,7 @@ public class Controller implements KeyListener, ActionListener
      */
     public void asteroidDestroyed (int size, double xVal, double yVal)
     {
+        placeDebris(xVal,yVal);
         // If all the asteroids are gone, schedule a transition
         if (pstate.countAsteroids() == 0)
         {
@@ -231,7 +253,7 @@ public class Controller implements KeyListener, ActionListener
     {
 
     }
-
+    
     /**
      * Schedules a transition m msecs in the future
      */
