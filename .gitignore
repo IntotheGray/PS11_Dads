@@ -6,3 +6,5 @@ bin/asteroids/participants/Bullet.class
 *.class
 bin/asteroids/game/Controller.class
 *.class
+*.class
+bin/asteroids/game/ParticipantState.class
