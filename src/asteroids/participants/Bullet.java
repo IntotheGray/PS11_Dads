@@ -19,7 +19,9 @@ public class Bullet extends Participant implements AsteroidDestroyer
     private Shape outline;
     private double direction;
     private double XPosition, YPosition;
-    
+    final long startTime;
+    private long endTime;
+
     public Bullet (double x, double y,double Direction, Controller controller, Ship ship)
     {
         
@@ -38,6 +40,7 @@ public class Bullet extends Participant implements AsteroidDestroyer
         poly.lineTo(-1, 1);
         poly.closePath();
         outline = poly;
+        startTime = System.currentTimeMillis();
         
         
     }
@@ -53,7 +56,7 @@ public class Bullet extends Participant implements AsteroidDestroyer
         
         setSpeed(BULLET_SPEED + ship.getSpeed());
         setDirection(direction);
-        new ParticipantCountdownTimer(this, "travelTime" ,3000);
+        new ParticipantCountdownTimer(this, "travelTime" ,BULLET_DURATION + 600);
         //accelerate(SHIP_ACCELERATION);
         
         //move();
@@ -77,13 +80,14 @@ public class Bullet extends Participant implements AsteroidDestroyer
         }
         
     }
-    
-
-    public void maxRange (Participant p)
+    public long timeElapsed (Participant p)
     {
-        Participant.expire(this);
-        controller.bulletDestroyed();
+        endTime = System.currentTimeMillis();
+        long elapsed = endTime - startTime;
+        return elapsed;
     }
+
+
     @Override 
     public void countdownComplete(Object payload)
     {
