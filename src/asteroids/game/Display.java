@@ -66,5 +66,6 @@ public class Display extends JFrame
     public void setLegend (String s)
     {
         screen.setLegend(s);
+        System.out.println("Working");
     }
 }
