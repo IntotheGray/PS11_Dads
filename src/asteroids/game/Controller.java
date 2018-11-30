@@ -122,7 +122,7 @@ public class Controller implements KeyListener, ActionListener
 
     private void placeBullet ()
     {
-        if (pstate.bulletCount() < 8)
+        if (pstate.bulletCount() < BULLET_LIMIT)
         {
             
             bullet = new Bullet(ship.getXNose(), ship.getYNose(), ship.getRotation(), this, ship);
