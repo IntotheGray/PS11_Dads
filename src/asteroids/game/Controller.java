@@ -7,6 +7,7 @@ import javax.swing.*;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
+import asteroids.participants.Debris;
 
 /**
  * Controls a game of Asteroids.
@@ -21,6 +22,8 @@ public class Controller implements KeyListener, ActionListener
 
     /** The bullet (if one is active) */
     private Bullet bullet;
+    
+    private Debris debris;
 
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
@@ -118,6 +121,9 @@ public class Controller implements KeyListener, ActionListener
     private void placeAsteroids ()
     {
         addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        addParticipant(new Asteroid(0, 2, 700, EDGE_OFFSET, 3, this));
+        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, 700, 3, this));
+        addParticipant(new Asteroid(0, 2, 700, 700, 3, this));
     }
 
     private void placeBullet ()
@@ -131,6 +137,23 @@ public class Controller implements KeyListener, ActionListener
            
         }
 
+    }
+    
+    /**
+     * Given xy place debris
+     * @param x
+     * @param y
+     */
+    private void placeDebris (double x , double y)
+    {
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x , y, this));
     }
 
     /**
@@ -181,6 +204,7 @@ public class Controller implements KeyListener, ActionListener
      */
     public void shipDestroyed ()
     {
+        placeDebris(ship.getX(), ship.getY());
         // Null out the ship
         ship = null;
 
@@ -196,13 +220,28 @@ public class Controller implements KeyListener, ActionListener
 
     /**
      * An asteroid has been destroyed
+     * Grabs the size of this asteroid to add smaller asteroids if required
+     * Also needs the location of the asteroid to create new ones
      */
-    public void asteroidDestroyed ()
+    public void asteroidDestroyed (int size, double xVal, double yVal)
     {
+        placeDebris(xVal,yVal);
         // If all the asteroids are gone, schedule a transition
         if (pstate.countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
+        }
+        
+        if (size == 2)
+        {
+            addParticipant(new Asteroid(1, 1, xVal , yVal, 5, this));
+            addParticipant(new Asteroid(1, 1, xVal , yVal, 5, this));
+        }
+        
+        if (size == 1)
+        {
+            addParticipant(new Asteroid(3, 0, xVal , yVal, 8, this));
+            addParticipant(new Asteroid(3, 0, xVal , yVal, 8, this));
         }
     }
 
@@ -214,7 +253,7 @@ public class Controller implements KeyListener, ActionListener
     {
 
     }
-
+    
     /**
      * Schedules a transition m msecs in the future
      */
@@ -326,6 +365,35 @@ public class Controller implements KeyListener, ActionListener
             firing = true;
         }
 
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        {
+            firing = true;
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_D && ship != null)
+        {
+            // ship.turnRight();
+            turningRight = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_A && ship != null)
+        {
+            // ship.turnLeft();
+            turningLeft = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_W && ship != null)
+        {
+            // ship.accelerate();
+
+            accelerating = true;
+
+        }
+        if (e.getKeyCode() == KeyEvent.VK_S && ship != null)
+        {
+            // placeBullet();
+            // bullet.shoot();
+            firing = true;
+        }
+        
     }
 
     /**
@@ -360,6 +428,35 @@ public class Controller implements KeyListener, ActionListener
 
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
+        {
+            // placeBullet();
+            // bullet.shoot();
+            firing = false;
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        {
+            firing = false;
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_D && ship != null)
+        {
+            // ship.turnRight();
+            turningRight = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_A && ship != null)
+        {
+            // ship.turnLeft();
+            turningLeft = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_W && ship != null)
+        {
+            // ship.accelerate();
+
+            accelerating = false;
+
+        }
+        if (e.getKeyCode() == KeyEvent.VK_S && ship != null)
         {
             // placeBullet();
             // bullet.shoot();
