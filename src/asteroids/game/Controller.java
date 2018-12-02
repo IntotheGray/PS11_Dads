@@ -22,7 +22,7 @@ public class Controller implements KeyListener, ActionListener
 
     /** The bullet (if one is active) */
     private Bullet bullet;
-    
+
     private Debris debris;
 
     /** When this timer goes off, it is time to refresh the animation */
@@ -50,11 +50,14 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
+    private boolean testMode;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
-    public Controller ()
+    public Controller (boolean testMode)
     {
+        this.testMode = testMode;
         // Initialize the ParticipantState
         pstate = new ParticipantState();
 
@@ -120,40 +123,44 @@ public class Controller implements KeyListener, ActionListener
      */
     private void placeAsteroids ()
     {
-        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
-        addParticipant(new Asteroid(0, 2, 700, EDGE_OFFSET, 3, this));
-        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, 700, 3, this));
-        addParticipant(new Asteroid(0, 2, 700, 700, 3, this));
+        if (testMode == false)
+        {
+
+            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, 700, EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, 700, 3, this));
+            addParticipant(new Asteroid(0, 2, 700, 700, 3, this));
+        }
     }
 
     private void placeBullet ()
     {
         if (pstate.bulletCount() < BULLET_LIMIT)
         {
-            
+
             bullet = new Bullet(ship.getXNose(), ship.getYNose(), ship.getRotation(), this, ship);
             addParticipant(bullet);
-            
-           
+
         }
 
     }
-    
+
     /**
      * Given xy place debris
+     * 
      * @param x
      * @param y
      */
-    private void placeDebris (double x , double y)
+    private void placeDebris (double x, double y)
     {
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
-        addParticipant(new Debris(x , y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(x, y, this));
     }
 
     /**
@@ -219,33 +226,31 @@ public class Controller implements KeyListener, ActionListener
     }
 
     /**
-     * An asteroid has been destroyed
-     * Grabs the size of this asteroid to add smaller asteroids if required
-     * Also needs the location of the asteroid to create new ones
+     * An asteroid has been destroyed Grabs the size of this asteroid to add smaller asteroids if required Also needs
+     * the location of the asteroid to create new ones
      */
     public void asteroidDestroyed (int size, double xVal, double yVal)
     {
-        placeDebris(xVal,yVal);
+        placeDebris(xVal, yVal);
         // If all the asteroids are gone, schedule a transition
         if (pstate.countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
         }
-        
+
         if (size == 2)
         {
-            addParticipant(new Asteroid(1, 1, xVal , yVal, 5, this));
-            addParticipant(new Asteroid(1, 1, xVal , yVal, 5, this));
+            addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
+            addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
         }
-        
+
         if (size == 1)
         {
-            addParticipant(new Asteroid(3, 0, xVal , yVal, 8, this));
-            addParticipant(new Asteroid(3, 0, xVal , yVal, 8, this));
+            addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
+            addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
         }
     }
 
-    
     /**
      * A bullet has been destroyed
      */
@@ -253,7 +258,7 @@ public class Controller implements KeyListener, ActionListener
     {
 
     }
-    
+
     /**
      * Schedules a transition m msecs in the future
      */
@@ -278,7 +283,7 @@ public class Controller implements KeyListener, ActionListener
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {
-            
+
             if (turningRight == true)
             {
                 ship.turnRight();
@@ -369,7 +374,7 @@ public class Controller implements KeyListener, ActionListener
         {
             firing = true;
         }
-        
+
         if (e.getKeyCode() == KeyEvent.VK_D && ship != null)
         {
             // ship.turnRight();
@@ -393,7 +398,7 @@ public class Controller implements KeyListener, ActionListener
             // bullet.shoot();
             firing = true;
         }
-        
+
     }
 
     /**
@@ -433,12 +438,12 @@ public class Controller implements KeyListener, ActionListener
             // bullet.shoot();
             firing = false;
         }
-        
+
         if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
         {
             firing = false;
         }
-        
+
         if (e.getKeyCode() == KeyEvent.VK_D && ship != null)
         {
             // ship.turnRight();

@@ -28,11 +28,12 @@ public class Asteroids
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (choice == 0)
         {
-            new Controller();
+            new Controller(false);
         }
         else if (choice == 1)
         {
-            JOptionPane.showMessageDialog(null, "Sorry, there is no enhanced version");
+            JOptionPane.showMessageDialog(null, "Entering testing environment");
+            new Controller(true);
         }
     }
 }
