@@ -3,7 +3,10 @@ package asteroids.game;
 import static asteroids.game.Constants.*;
 import java.awt.event.*;
 import java.util.Iterator;
+import java.util.Random;
 import javax.swing.*;
+import asteroids.participants.AlienBullet;
+import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
@@ -25,6 +28,7 @@ public class Controller implements KeyListener, ActionListener
 
     private Debris debris;
 
+    private AlienBullet alienBullet;
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
 
@@ -51,6 +55,8 @@ public class Controller implements KeyListener, ActionListener
     private Display display;
 
     private boolean testMode;
+    
+    private AlienShip alienShip;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -127,9 +133,9 @@ public class Controller implements KeyListener, ActionListener
         {
 
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, 700, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, 700, 3, this));
-            addParticipant(new Asteroid(0, 2, 700, 700, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE-EDGE_OFFSET, EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE-EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE-EDGE_OFFSET, SIZE-EDGE_OFFSET, 3, this));
         }
     }
 
@@ -143,6 +149,27 @@ public class Controller implements KeyListener, ActionListener
 
         }
 
+    }
+    public void placeAlienBullet()
+    {
+        alienBullet = new AlienBullet(alienShip.getX(),alienShip.getY(),RANDOM.nextDouble() * 2 * Math.PI,this,alienShip);
+        addParticipant(alienBullet);
+        alienBullet.shoot();
+    }
+    public void placeAlienShip ()
+    {
+        Random quarter = new Random();
+        int whichSide =quarter.nextInt(2);
+        if (whichSide == 0)
+        {
+            alienShip = new AlienShip(false,0,quarter.nextInt(SIZE+1),0,this);
+        }
+        if (whichSide == 1)
+        {
+            alienShip = new AlienShip(false,SIZE ,quarter.nextInt(SIZE+1),Math.PI,this);
+        }
+       
+        addParticipant(alienShip);
     }
 
     /**
@@ -190,6 +217,7 @@ public class Controller implements KeyListener, ActionListener
         // Reset statistics
         lives = 1;
 
+        new controllerCountdownTimer(this);
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -254,9 +282,19 @@ public class Controller implements KeyListener, ActionListener
     /**
      * A bullet has been destroyed
      */
+    public void alienDestroyed (double x, double y)
+    {
+        placeDebris(alienShip.getX(),alienShip.getY());
+        alienShip = null;
+        noAliens();
+    }
     public void bulletDestroyed ()
     {
 
+    }
+    public void alienBulletDestroyed()
+    {
+        
     }
 
     /**
@@ -468,4 +506,13 @@ public class Controller implements KeyListener, ActionListener
             firing = false;
         }
     }
+    public void noAliens()
+    {
+        new controllerCountdownTimer(this);
+    }
+    public void countdownComplete()
+    {
+        placeAlienShip();
+    }
+    
 }

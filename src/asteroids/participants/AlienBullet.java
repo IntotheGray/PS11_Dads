@@ -1,11 +1,12 @@
 package asteroids.participants;
 
+import asteroids.destroyers.ShipDestroyer;
+import asteroids.game.Controller;
+import asteroids.game.Constants;
 import static asteroids.game.Constants.*;
-
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.geom.*;
-import asteroids.destroyers.AlienDestroyer;
 import asteroids.destroyers.AsteroidDestroyer;
 import asteroids.destroyers.ShipDestroyer;
 import asteroids.destroyers.BulletDestroyer;
@@ -13,86 +14,65 @@ import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
 
-public class Bullet extends Participant implements AsteroidDestroyer,AlienDestroyer
+public class AlienBullet extends Participant implements ShipDestroyer, AsteroidDestroyer
 {
 
-    private Controller controller;
-    private Ship ship;
-    private Shape outline;
     private double direction;
-    private double XPosition, YPosition;
-    final long startTime;
-    private long endTime;
+    private AlienShip alienShip;
+    private Shape outline;
+    final long startTimes;
+    private long endTimes;
+    private Controller controller;
 
-    public Bullet (double x, double y, double Direction, Controller controller, Ship ship)
+    public AlienBullet (double x, double y, double Direction, Controller controller, AlienShip alienShip)
     {
-
         this.direction = Direction;
         this.controller = controller;
-        this.ship = ship;
-        XPosition = x;
-        YPosition = y;
+        this.alienShip = alienShip;
+
         setPosition(x, y);
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1, 0);
-        
+
         poly.lineTo(-1, 1);
         poly.lineTo(0, 1);
         poly.lineTo(0, 0);
-        
 
         poly.closePath();
         outline = poly;
-        startTime = System.currentTimeMillis();
-
-    }
-
-    public void expireB ()
-    {
-        Participant.expire(this);
-        controller.bulletDestroyed();
+        startTimes = System.currentTimeMillis();
     }
 
     public void shoot ()
     {
-        if (BULLET_SPEED + ship.getSpeed() <= SPEED_LIMIT)
-        {
-            setSpeed(BULLET_SPEED + ship.getSpeed());
-        }
-        else
-        {
-            setSpeed(SPEED_LIMIT);
-        }
+        setSpeed(BULLET_SPEED);
         setDirection(direction);
         new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 600);
-        // accelerate(SHIP_ACCELERATION);
-
-        // move();
     }
 
     @Override
     protected Shape getOutline ()
     {
+        // TODO Auto-generated method stub
         return outline;
     }
 
-    /**
-     * when a bullet collides with a bullet destroyer
-     */
     @Override
     public void collidedWith (Participant p)
     {
         if (p instanceof BulletDestroyer)
         {
-            expireB();
+            Participant.expire(this);
+
+            controller.alienBulletDestroyed();
         }
 
     }
 
     public long timeElapsed (Participant p)
     {
-        endTime = System.currentTimeMillis();
-        long elapsed = endTime - startTime;
+        endTimes = System.currentTimeMillis();
+        long elapsed = endTimes - startTimes;
         return elapsed;
     }
 
@@ -101,8 +81,9 @@ public class Bullet extends Participant implements AsteroidDestroyer,AlienDestro
     {
         if (payload.equals("travelTime"))
         {
-            expireB();
+            Participant.expire(this);
+
+            controller.alienBulletDestroyed();
         }
     }
-
 }

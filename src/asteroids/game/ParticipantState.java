@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+import asteroids.participants.AlienBullet;
+import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 
@@ -85,11 +87,22 @@ public class ParticipantState
     {
         int count = 0;
         for (Participant p: participants)
-            if (p instanceof Bullet && !p.isExpired())
+            if (p instanceof Bullet && !p.isExpired() && !(p instanceof AlienBullet))
             {
                 count++;
             }
+            
         return count;
+    }
+    public boolean aliensExist ()
+    {
+        boolean existing = false;
+        for (Participant p: participants)
+        if(p instanceof AlienShip && !p.isExpired())
+        {
+            existing = true;
+        }
+        return existing;
     }
     
     /**
