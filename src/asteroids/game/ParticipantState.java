@@ -114,13 +114,13 @@ public class ParticipantState
                 for (Participant q: participants)
                     if (q instanceof Ship && !q.isExpired())
                     {
-                      if (((Math.sqrt(Math.pow(q.getX()- p.getX(), 2) + Math.pow(q.getY()-p.getY(), 2))) <= 250) || 
-                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250)) ||
-                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250)) ||
-                              ((Math.sqrt(Math.pow(((750 - q.getY())+ (0 + p.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250)) ||
-                              ((Math.sqrt(Math.pow(((750 - p.getY())+ (0 + q.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250)) ||
-                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow((0 + q.getY())+(750-p.getY()), 2))) <=250) || 
-                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow((0 + p.getY())+(750-q.getY()), 2)))) <= 250 ) 
+                      if (((Math.sqrt(Math.pow(q.getX()- p.getX(), 2) + Math.pow(q.getY()-p.getY(), 2))) <= 250 + 100) || 
+                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250 + 100)) ||
+                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250 + 100)) ||
+                              ((Math.sqrt(Math.pow(((750 - q.getY())+ (0 + p.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250 + 100)) ||
+                              ((Math.sqrt(Math.pow(((750 - p.getY())+ (0 + q.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250 + 100)) ||
+                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow((0 + q.getY())+(750-p.getY()), 2))) <=250 + 100) || 
+                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow((0 + p.getY())+(750-q.getY()), 2)))) <= 250 + 100) 
                       {
                           nearbyShip =true;
                       }
