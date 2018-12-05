@@ -322,19 +322,19 @@ public class Controller implements KeyListener, ActionListener
         else if (e.getSource() == refreshTimer)
         {
 
-            if (turningRight == true)
+            if (turningRight == true && !ship.isExpired())
             {
                 ship.turnRight();
             }
-            if (turningLeft == true)
+            if (turningLeft == true && !ship.isExpired())
             {
                 ship.turnLeft();
             }
-            if (accelerating == true)
+            if (accelerating == true && !ship.isExpired())
             {
                 ship.accelerate();
             }
-            if (firing == true)
+            if (firing == true && !ship.isExpired())
             {
                 placeBullet();
                 bullet.shoot();
