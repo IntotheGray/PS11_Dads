@@ -5,8 +5,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * The main class for the application.
- * @author Eric J. Marsh, Jack Ronnie
- * Skate Fast...
+ * 
+ * @author Eric J. Marsh, Jack Ronnie Skate Fast...
  */
 public class Asteroids
 {

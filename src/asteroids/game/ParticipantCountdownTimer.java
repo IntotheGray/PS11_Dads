@@ -1,10 +1,7 @@
 package asteroids.game;
 
-
 import javax.swing.*;
-
 import java.awt.event.*;
-
 
 /**
  * Provides objects that wait for a certain amount of time to pass before making a callback to a Participant's

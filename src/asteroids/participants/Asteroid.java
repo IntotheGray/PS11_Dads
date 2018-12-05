@@ -13,7 +13,7 @@ import asteroids.game.Participant;
 /**
  * Represents asteroids
  */
-public class Asteroid extends Participant implements ShipDestroyer,BulletDestroyer,AlienDestroyer
+public class Asteroid extends Participant implements ShipDestroyer, BulletDestroyer, AlienDestroyer
 {
     /** The size of the asteroid (0 = small, 1 = medium, 2 = large) */
     private int size;
@@ -58,7 +58,6 @@ public class Asteroid extends Participant implements ShipDestroyer,BulletDestroy
         return outline;
     }
 
-    
     /**
      * Returns the x-coordinate of the point on the screen where the asteroid is located.
      */
@@ -78,8 +77,7 @@ public class Asteroid extends Participant implements ShipDestroyer,BulletDestroy
         transformPoint(point);
         return point.getY();
     }
-    
-    
+
     /**
      * Creates the outline of the asteroid based on its variety and size.
      */
@@ -170,9 +168,9 @@ public class Asteroid extends Participant implements ShipDestroyer,BulletDestroy
         {
             // Expire the asteroid
             Participant.expire(this);
-            
+
             // Inform the controller
-            controller.asteroidDestroyed(getSize(), getX() , getY());            
+            controller.asteroidDestroyed(getSize(), getX(), getY());
         }
     }
 

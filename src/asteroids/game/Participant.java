@@ -223,8 +223,8 @@ public abstract class Participant
     /**
      * Returns a Shape object that describes the outline of this Participant. The center of the Shape should be at
      * coordinate (0,0). The center is the reference used when the Shape is moved or rotated. This method is called
-     * frequently, so it should be efficient. The Shape that is returned will not be modified, so it can be cached.
-     * The Shape must have a non-zero area or no collisions will be detected.  (E.g., a point or line has zero area.)
+     * frequently, so it should be efficient. The Shape that is returned will not be modified, so it can be cached. The
+     * Shape must have a non-zero area or no collisions will be detected. (E.g., a point or line has zero area.)
      */
     protected abstract Shape getOutline ();
 
@@ -233,7 +233,6 @@ public abstract class Participant
      */
     public abstract void collidedWith (Participant p);
 
-    
     /**
      * This method is called when a {@link asteroids.game.ParticipantCountdownTimer} that was constructed for this
      * Participant completes its countdown, so long as this Participant is not expired. The method should take
@@ -309,7 +308,7 @@ public abstract class Participant
     public void draw (Graphics2D g)
     {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY); 
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         if (border == null)
         {
             border = getOutline();

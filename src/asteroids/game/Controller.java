@@ -41,7 +41,7 @@ public class Controller implements KeyListener, ActionListener
     private boolean firing;
 
     private int numBullets = 0;
-    
+
     private boolean shipNearAlien;
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
@@ -57,7 +57,7 @@ public class Controller implements KeyListener, ActionListener
     private Display display;
 
     private boolean testMode;
-    
+
     private AlienShip alienShip;
 
     /**
@@ -135,9 +135,9 @@ public class Controller implements KeyListener, ActionListener
         {
 
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, SIZE-EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE-EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, SIZE-EDGE_OFFSET, SIZE-EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
         }
     }
 
@@ -152,25 +152,28 @@ public class Controller implements KeyListener, ActionListener
         }
 
     }
-    public void placeAlienBullet()
+
+    public void placeAlienBullet ()
     {
-        alienBullet = new AlienBullet(alienShip.getX(),alienShip.getY(),RANDOM.nextDouble() * 2 * Math.PI,this,alienShip);
+        alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), RANDOM.nextDouble() * 2 * Math.PI, this,
+                alienShip);
         addParticipant(alienBullet);
         alienBullet.shoot();
     }
+
     public void placeAlienShip ()
     {
         Random quarter = new Random();
-        int whichSide =quarter.nextInt(2);
+        int whichSide = quarter.nextInt(2);
         if (whichSide == 0)
         {
-            alienShip = new AlienShip(false,0,quarter.nextInt(SIZE+1),0,this);
+            alienShip = new AlienShip(false, 0, quarter.nextInt(SIZE + 1), 0, this);
         }
         if (whichSide == 1)
         {
-            alienShip = new AlienShip(false,SIZE ,quarter.nextInt(SIZE+1),Math.PI,this);
+            alienShip = new AlienShip(false, SIZE, quarter.nextInt(SIZE + 1), Math.PI, this);
         }
-       
+
         addParticipant(alienShip);
     }
 
@@ -219,7 +222,7 @@ public class Controller implements KeyListener, ActionListener
         // Reset statistics
         lives = 1;
 
-        new controllerCountdownTimer(RANDOM.nextInt(5000)+5000,this);
+        new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -286,17 +289,19 @@ public class Controller implements KeyListener, ActionListener
      */
     public void alienDestroyed (double x, double y)
     {
-        placeDebris(alienShip.getX(),alienShip.getY());
+        placeDebris(alienShip.getX(), alienShip.getY());
         alienShip = null;
         noAliens();
     }
+
     public void bulletDestroyed ()
     {
 
     }
-    public void alienBulletDestroyed()
+
+    public void alienBulletDestroyed ()
     {
-        
+
     }
 
     /**
@@ -341,9 +346,9 @@ public class Controller implements KeyListener, ActionListener
                 placeBullet();
                 bullet.shoot();
             }
-            
+
             // It may be time to make a game transition
-            
+
             performTransition();
 
             // Move the participants to their new locations
@@ -516,13 +521,15 @@ public class Controller implements KeyListener, ActionListener
             firing = false;
         }
     }
-    public void noAliens()
+
+    public void noAliens ()
     {
-        new controllerCountdownTimer(RANDOM.nextInt(5000)+5000,this);
+        new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
     }
-    public void countdownComplete()
+
+    public void countdownComplete ()
     {
         placeAlienShip();
     }
-    
+
 }

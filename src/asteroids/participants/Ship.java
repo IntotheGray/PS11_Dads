@@ -11,7 +11,7 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents ships
  */
-public class Ship extends Participant implements AsteroidDestroyer,AlienDestroyer
+public class Ship extends Participant implements AsteroidDestroyer, AlienDestroyer
 {
     /** The outline of the ship */
     private Shape outline;
@@ -125,13 +125,9 @@ public class Ship extends Participant implements AsteroidDestroyer,AlienDestroye
     {
         // Give a burst of acceleration, then schedule another
         // burst for 200 msecs from now.
-        /*if (payload.equals("move"))
-        {
-            accelerate();
-            new ParticipantCountdownTimer(this, "move", 200);
-        }
-        */
+        /*
+         * if (payload.equals("move")) { accelerate(); new ParticipantCountdownTimer(this, "move", 200); }
+         */
     }
 
-    
 }

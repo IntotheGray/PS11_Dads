@@ -1,7 +1,6 @@
 package asteroids.participants;
 
 import static asteroids.game.Constants.*;
-
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.geom.*;
@@ -13,7 +12,7 @@ import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
 
-public class Bullet extends Participant implements AsteroidDestroyer,AlienDestroyer
+public class Bullet extends Participant implements AsteroidDestroyer, AlienDestroyer
 {
 
     private Controller controller;
@@ -35,11 +34,10 @@ public class Bullet extends Participant implements AsteroidDestroyer,AlienDestro
         setPosition(x, y);
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1, 0);
-        
+
         poly.lineTo(-1, 1);
         poly.lineTo(0, 1);
         poly.lineTo(0, 0);
-        
 
         poly.closePath();
         outline = poly;

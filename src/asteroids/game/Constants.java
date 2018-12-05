@@ -33,8 +33,7 @@ public class Constants
     public final static double SPEED_LIMIT = 15;
 
     /**
-     * Amount of "friction" that can be applied to ships so that they eventually
-     * stop. Should be negative.
+     * Amount of "friction" that can be applied to ships so that they eventually stop. Should be negative.
      */
     public final static double SHIP_FRICTION = -0.05;
 
@@ -47,31 +46,29 @@ public class Constants
      * The number of milliseconds between the beginnings of frame refreshes
      */
     public final static int FRAME_INTERVAL = 60;
-    
+
     /**
      * The number of milliseconds between beats, initially.
      */
     public final static int INITIAL_BEAT = 900;
-    
+
     /**
      * The fastest beat interval.
      */
     public final static int FASTEST_BEAT = 300;
-    
+
     /**
      * The amount by which the beat interval increases each time there's a beat.
      */
     public final static int BEAT_DELTA = 9;
 
     /**
-     * The number of milliseconds between the end of a life and the display of
-     * the next screen.
+     * The number of milliseconds between the end of a life and the display of the next screen.
      */
     public final static int END_DELAY = 2500;
 
     /**
-     * The average offset in pixels from the edges of the screen of newly-placed
-     * asteroids.
+     * The average offset in pixels from the edges of the screen of newly-placed asteroids.
      */
     public final static int EDGE_OFFSET = 150;
 
@@ -109,52 +106,52 @@ public class Constants
      * Scaling factors used for alien ships of size 0 and 1.
      */
     public final static double[] ALIENSHIP_SCALE = { 0.5, 1.0 };
-    
+
     /**
      * Score earned for alien ships of size 0 and 1.
      */
     public final static int[] ALIENSHIP_SCORE = { 1000, 200 };
-    
+
     /**
      * Delay after which an alien ship appears.
      */
     public final static int ALIEN_DELAY = 5000;
-    
+
     /**
      * Maximum speed of large asteroid
      */
     public final static int MAXIMUM_LARGE_ASTEROID_SPEED = 3;
-    
+
     /**
      * Maximum speed of medium asteroid
      */
     public final static int MAXIMUM_MEDIUM_ASTEROID_SPEED = 5;
-    
+
     /**
      * Maximum speed of small asteroid
      */
     public final static int MAXIMUM_SMALL_ASTEROID_SPEED = 8;
-    
+
     /**
      * Offset of score/level from left/right side.
      */
     public final static int LABEL_HORIZONTAL_OFFSET = 50;
-    
+
     /**
      * Offset of score/level from top side.
      */
     public final static int LABEL_VERTICAL_OFFSET = 30;
-    
+
     /**
      * Height of ship
      */
     public final static int SHIP_HEIGHT = 42;
-    
+
     /**
      * Width of ship
      */
     public final static int SHIP_WIDTH = 24;
-    
+
     /**
      * Distance between ships when used to display lives
      */
