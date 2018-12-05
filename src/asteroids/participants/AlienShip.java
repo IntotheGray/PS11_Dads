@@ -32,7 +32,14 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
 
         createAlienShipOutline(false);
         setDirection(direction);
-        setVelocity(5, this.getDirection());
+        if (small)
+        {
+            setVelocity(10, this.getDirection());
+        }
+        else if (!small)
+        {
+            setVelocity(5, this.getDirection());
+        }
         Random turny = new Random();
         new ParticipantCountdownTimer(this, "turn", turny.nextInt(500) + 1000);
         new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 1000);
@@ -72,7 +79,7 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
     public void nearShip (boolean nearbyShip)
     {
         this.nearbyShip = nearbyShip;
-        
+
     }
 
     @Override
@@ -130,11 +137,10 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
             {
                 controller.placeAlienBullet();
             }
-                Random turny = new Random();
-            
-                
-                new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 2000);
-            
+            Random turny = new Random();
+
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 2000);
+
         }
     }
 }
