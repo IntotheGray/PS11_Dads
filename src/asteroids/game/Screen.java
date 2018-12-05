@@ -4,6 +4,7 @@ import static asteroids.game.Constants.*;
 import java.awt.*;
 import java.util.Iterator;
 import javax.swing.*;
+import asteroids.game.Controller;
 
 /**
  * The area of the display in which the game takes place.
@@ -60,9 +61,18 @@ public class Screen extends JPanel
         {
             iter.next().draw(g);
         }
-
+        
         // Draw the legend across the middle of the panel
+        setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 120));
         int size = g.getFontMetrics().stringWidth(legend);
         g.drawString(legend, (SIZE - size) / 2, SIZE / 2);
+        // Draw Score
+        setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+        FontMetrics fm = g.getFontMetrics();
+        int height = fm.getHeight();     
+        g.drawString(Integer.toString(controller.getScore()), height,height);
+        g.drawString(Integer.toString(controller.getLevel()), (750-height), height);
     }
+    
+    
 }

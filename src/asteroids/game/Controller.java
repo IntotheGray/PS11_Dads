@@ -56,9 +56,20 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
+    
     private boolean testMode;
-
+    /**
+     * The alien ship if one is active
+     */
     private AlienShip alienShip;
+    /**
+     * keep track of ship score
+     */
+    private int score;
+    /**
+     * Current level
+     */
+    private int level;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -102,7 +113,7 @@ public class Controller implements KeyListener, ActionListener
         display.setLegend("Asteroids");
 
         // Place four asteroids near the corners of the screen.
-        placeAsteroids();
+        placeAsteroids(0);
     }
 
     /**
@@ -129,15 +140,23 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Places an asteroid near one corner of the screen. Gives it a random velocity and rotation.
      */
-    private void placeAsteroids ()
+    private void placeAsteroids (int level)
     {
         if (testMode == false)
         {
-
+            
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            
+            if (level > 1)
+            {
+               for (int i = 1; i < level; i++)
+               {
+                   addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+               }
+            }
         }
     }
 
@@ -213,14 +232,16 @@ public class Controller implements KeyListener, ActionListener
         // Clear the screen
         clear();
 
-        // Plac asteroids
-        placeAsteroids();
+        // Place asteroids
+        placeAsteroids(0);
 
         // Place the ship
         placeShip();
 
         // Reset statistics
-        lives = 1;
+        lives = 3;
+        score = 0;
+        level = 1;
 
         new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
         // Start listening to events (but don't listen twice)
@@ -248,14 +269,14 @@ public class Controller implements KeyListener, ActionListener
         // Null out the ship
         ship = null;
 
-        // Display a legend
-        display.setLegend("Ouch!");
 
         // Decrement lives
         lives--;
 
         // Since the ship was destroyed, schedule a transition
         scheduleTransition(END_DELAY);
+        
+        
     }
 
     /**
@@ -266,21 +287,29 @@ public class Controller implements KeyListener, ActionListener
     {
         placeDebris(xVal, yVal);
         // If all the asteroids are gone, schedule a transition
-        if (pstate.countAsteroids() == 0)
+        if (pstate.countAsteroids() == 0 && alienShip == null )
         {
             scheduleTransition(END_DELAY);
+            level = level + 1;
+            placeAsteroids(level);
         }
 
         if (size == 2)
         {
+            score = score + ASTEROID_SCORE[2];
             addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
             addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
         }
 
         if (size == 1)
         {
+            score = score + ASTEROID_SCORE[1];
             addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
             addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
+        }
+        if (size == 0)
+        {
+            score = score + ASTEROID_SCORE[0];
         }
     }
 
@@ -289,9 +318,19 @@ public class Controller implements KeyListener, ActionListener
      */
     public void alienDestroyed (double x, double y)
     {
+        
         placeDebris(alienShip.getX(), alienShip.getY());
         alienShip = null;
         noAliens();
+        
+        
+        if (pstate.countAsteroids() == 0)
+        {
+            scheduleTransition(END_DELAY);
+            level = level + 1;
+            placeAsteroids(level);
+        }
+        
     }
 
     public void bulletDestroyed ()
@@ -389,6 +428,10 @@ public class Controller implements KeyListener, ActionListener
             if (lives <= 0)
             {
                 finalScreen();
+            }
+            if (ship == null && lives > 0)
+            {
+                placeShip();
             }
         }
     }
@@ -531,5 +574,26 @@ public class Controller implements KeyListener, ActionListener
     {
         placeAlienShip();
     }
-
+    /**
+     * returns the current score
+     * 
+     */
+    public int getScore()
+    {
+        return score;
+    }
+    /**
+     * Returns the number of lives left
+     */
+    public int getLives()
+    {
+        return lives;
+    }
+    /**
+     * Return the level
+     */
+    public int getLevel()
+    {
+        return level;
+    }
 }
