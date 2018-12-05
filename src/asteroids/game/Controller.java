@@ -41,6 +41,8 @@ public class Controller implements KeyListener, ActionListener
     private boolean firing;
 
     private int numBullets = 0;
+    
+    private boolean shipNearAlien;
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
      * in the future to give the user time to see what has happened before doing something like going to a new level or
@@ -217,7 +219,7 @@ public class Controller implements KeyListener, ActionListener
         // Reset statistics
         lives = 1;
 
-        new controllerCountdownTimer(this);
+        new controllerCountdownTimer(RANDOM.nextInt(5000)+5000,this);
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -339,12 +341,20 @@ public class Controller implements KeyListener, ActionListener
                 placeBullet();
                 bullet.shoot();
             }
+            
             // It may be time to make a game transition
+            
             performTransition();
 
             // Move the participants to their new locations
             pstate.moveParticipants();
 
+            shipNearAlien = pstate.aliensCanShoot();
+            System.out.println(shipNearAlien);
+            if (alienShip != null)
+            {
+                alienShip.nearShip(shipNearAlien);
+            }
             // Refresh screen
             display.refresh();
         }
@@ -508,7 +518,7 @@ public class Controller implements KeyListener, ActionListener
     }
     public void noAliens()
     {
-        new controllerCountdownTimer(this);
+        new controllerCountdownTimer(RANDOM.nextInt(5000)+5000,this);
     }
     public void countdownComplete()
     {

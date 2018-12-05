@@ -8,11 +8,12 @@ public class controllerCountdownTimer implements ActionListener
 
     private Timer timer;
     private Controller controller;
-    public controllerCountdownTimer (Controller controller)
+    public controllerCountdownTimer (int msecs,Controller controller)
     {
         this.controller = controller;
-        timer = new Timer(5000,this);
+        timer = new Timer(msecs,this);
         timer.start();
+        
     }
     @Override
     public void actionPerformed (ActionEvent arg0)

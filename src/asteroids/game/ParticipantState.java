@@ -8,6 +8,7 @@ import asteroids.participants.AlienBullet;
 import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
+import asteroids.participants.Ship;
 
 /**
  * Keeps track of the Participants, their motions, and their collisions.
@@ -103,6 +104,30 @@ public class ParticipantState
             existing = true;
         }
         return existing;
+    }
+    public boolean aliensCanShoot ()
+    {
+        boolean nearbyShip = false;
+        for (Participant p: participants)
+            if (p instanceof AlienShip && !p.isExpired())
+            {
+                for (Participant q: participants)
+                    if (q instanceof Ship && !q.isExpired())
+                    {
+                      if (((Math.sqrt(Math.pow(q.getX()- p.getX(), 2) + Math.pow(q.getY()-p.getY(), 2))) <= 250) || 
+                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250)) ||
+                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow(q.getY()-p.getY(), 2)) <= 250)) ||
+                              ((Math.sqrt(Math.pow(((750 - q.getY())+ (0 + p.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250)) ||
+                              ((Math.sqrt(Math.pow(((750 - p.getY())+ (0 + q.getY())), 2) + Math.pow(q.getX()-p.getX(), 2)) <= 250)) ||
+                              ((Math.sqrt(Math.pow(((750 - q.getX())+ (0 + p.getX())), 2) + Math.pow((0 + q.getY())+(750-p.getY()), 2))) <=250) || 
+                              ((Math.sqrt(Math.pow(((750 - p.getX())+ (0 + q.getX())), 2) + Math.pow((0 + p.getY())+(750-q.getY()), 2)))) <= 250 ) 
+                      {
+                          nearbyShip =true;
+                      }
+                    }
+
+            }
+        return nearbyShip;
     }
     
     /**
