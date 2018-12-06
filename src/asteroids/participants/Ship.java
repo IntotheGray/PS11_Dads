@@ -7,6 +7,7 @@ import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
+import java.util.Random;
 
 /**
  * Represents ships
@@ -15,7 +16,10 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienDestroy
 {
     /** The outline of the ship */
     private Shape outline;
-
+    
+    /** The outline of ship when accelerating*/
+    private Shape outlineAcc;
+    
     /** Game controller */
     private Controller controller;
 
@@ -37,6 +41,19 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienDestroy
         poly.closePath();
         outline = poly;
 
+        //Outline for when accelerating
+        Path2D.Double poly2 = new Path2D.Double();
+        poly2.moveTo(21, 0);
+        poly2.lineTo(-21, 12);
+        poly2.lineTo(-14, 10);
+        poly2.lineTo(-14, 5);
+        poly2.lineTo(-23, 0);
+        poly2.lineTo(-14, -5);
+        poly2.lineTo(-14, -10);
+        poly2.lineTo(-21, -12);
+        poly2.closePath();
+        outlineAcc = poly2;
+        
         // Schedule an acceleration in two seconds
         new ParticipantCountdownTimer(this, "move", 2000);
     }
@@ -60,11 +77,32 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienDestroy
         transformPoint(point);
         return point.getY();
     }
-
+    
+    /**
+     * Returns the outline of ship
+     */
     @Override
     protected Shape getOutline ()
     {
-        return outline;
+        if (controller.getAcc())
+        {
+            //Used to simulate the flicker when accelerating shown on demo
+            Random rand = new Random();
+            int n = rand.nextInt(2) + 1;
+            if (n == 1)
+            {
+                return outlineAcc;
+            }
+            else
+            {
+                return outline;
+            }
+        }
+        else
+        {
+            return outline; 
+        }
+        
     }
 
     /**

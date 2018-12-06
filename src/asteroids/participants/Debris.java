@@ -10,18 +10,36 @@ import static asteroids.game.Constants.*;
 
 public class Debris extends Participant
 {
+    //To keep track of debris mainly to move and remove the participants
     private Controller controller;
+    //shape of debris
     private Shape outline;
+    //To keep track of how long to show debris
     final long startTime;
     private long endTime;
 
-    public Debris(double x, double y, Controller controller)
+    /**
+     * Given an x and y location create a random moving debris
+     * @param x
+     * @param y
+     * @param controller
+     */
+    public Debris(boolean isShip, double x, double y, Controller controller)
     {
         this.controller = controller;
         setPosition(x,y);
-        setPosition(x, y);
         setVelocity(1, RANDOM.nextDouble() * 2 * Math.PI);
         setRotation(2 * Math.PI * RANDOM.nextDouble());
+        if (isShip)
+        {
+            Path2D.Double poly = new Path2D.Double();
+            poly.moveTo(21, 0);
+            poly.lineTo(-21, 12);
+            poly.closePath();
+            outline = poly;
+        }
+        else
+        {
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1,0);
         poly.lineTo(-1, 1);
@@ -31,16 +49,22 @@ public class Debris extends Participant
         poly.lineTo(-1, 1);
         poly.closePath();
         outline = poly;
+        }
         startTime = System.currentTimeMillis();
         new ParticipantCountdownTimer(this, "travelTime", 1000);
     }
     
-    
+    /**
+     * Removes debris
+     */
     public void expireDebris()
     {
         Participant.expire(this);
     }
     
+    /**
+     * Required to display debris from participants
+     */
     @Override
     protected Shape getOutline ()
     {
