@@ -8,6 +8,7 @@ import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
 import javax.swing.Timer;
+import java.util.Random;
 
 /**
  * Represents ships
@@ -83,7 +84,16 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienDestroy
     {
         if (controller.getAcc())
         {
-            return outlineAcc;
+            Random rand = new Random();
+            int n = rand.nextInt(2) + 1;
+            if (n == 1)
+            {
+                return outlineAcc;
+            }
+            else
+            {
+                return outline;
+            }
         }
         else
         {
