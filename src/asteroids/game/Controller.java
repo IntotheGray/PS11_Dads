@@ -56,7 +56,7 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
-    private boolean testMode;
+    public boolean testMode;
 
     private AlienShip alienShip;
 
@@ -153,10 +153,18 @@ public class Controller implements KeyListener, ActionListener
 
     }
 
-    public void placeAlienBullet ()
+    public void placeAlienBullet (boolean small)
     {
-        alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), RANDOM.nextDouble() * 2 * Math.PI, this,
-                alienShip);
+        if (small)
+        {
+        alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), small, this,
+                alienShip,ship);
+        }
+        if (!small)
+        {
+            alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), small, this,
+                    alienShip,ship);
+        }
         addParticipant(alienBullet);
         alienBullet.shoot();
     }
@@ -167,11 +175,11 @@ public class Controller implements KeyListener, ActionListener
         int whichSide = quarter.nextInt(2);
         if (whichSide == 0)
         {
-            alienShip = new AlienShip(false, 0, quarter.nextInt(SIZE + 1), 0, this);
+            alienShip = new AlienShip(true, 0, quarter.nextInt(SIZE + 1), 0, this);
         }
         if (whichSide == 1)
         {
-            alienShip = new AlienShip(false, SIZE, quarter.nextInt(SIZE + 1), Math.PI, this);
+            alienShip = new AlienShip(true, SIZE, quarter.nextInt(SIZE + 1), Math.PI, this);
         }
 
         addParticipant(alienShip);
@@ -222,7 +230,14 @@ public class Controller implements KeyListener, ActionListener
         // Reset statistics
         lives = 1;
 
+        if (!testMode)
+        {
         new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
+        }
+        if (testMode)
+        {
+            new controllerCountdownTimer(RANDOM.nextInt(500) , this);
+        }
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -287,7 +302,7 @@ public class Controller implements KeyListener, ActionListener
     /**
      * A bullet has been destroyed
      */
-    public void alienDestroyed (double x, double y)
+    public void alienDestroyed (double x, double y,boolean small)
     {
         placeDebris(alienShip.getX(), alienShip.getY());
         alienShip = null;
@@ -355,7 +370,6 @@ public class Controller implements KeyListener, ActionListener
             pstate.moveParticipants();
 
             shipNearAlien = pstate.aliensCanShoot();
-            System.out.println(shipNearAlien);
             if (alienShip != null)
             {
                 alienShip.nearShip(shipNearAlien);

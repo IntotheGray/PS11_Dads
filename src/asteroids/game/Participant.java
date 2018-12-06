@@ -92,7 +92,7 @@ public abstract class Participant
         direction = normalize(direction);
         double speed = getSpeed();
         speedX = Math.cos(direction) * speed;
-        speedY = Math.sin(direction) * speed;
+        speedY = Math.sin(direction) * speed ;
     }
 
     /**

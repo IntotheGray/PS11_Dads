@@ -30,13 +30,17 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         this.direction = direction;
         setPosition(x, y);
 
-        createAlienShipOutline(false);
+        if (controller.testMode)
+        {
+            setPosition(350,450);
+        }
+        createAlienShipOutline(small);
         setDirection(direction);
-        if (small)
+        if (this.small & !controller.testMode)
         {
             setVelocity(10, this.getDirection());
         }
-        else if (!small)
+        else if (!this.small & !controller.testMode)
         {
             setVelocity(5, this.getDirection());
         }
@@ -47,16 +51,9 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
 
     private void createAlienShipOutline (boolean small)
     {
-        double scale = 1;
+
         Path2D.Double poly = new Path2D.Double();
-        if (small)
-        {
-            scale = ALIENSHIP_SCALE[0];
-        }
-        if (!small)
-        {
-            scale = ALIENSHIP_SCALE[1];
-        }
+
         poly.moveTo(10, 0);
         poly.lineTo(-10, 0);
         poly.lineTo(-20, -9);
@@ -71,9 +68,19 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         poly.lineTo(20, -9);
         poly.lineTo(10, 0);
         poly.closePath();
+
+        double scale;
+        if (small)
+        {
+            scale = ALIENSHIP_SCALE[0];
+        }
+        else
+        {
+            scale = ALIENSHIP_SCALE[1];
+        }
+        poly.transform(AffineTransform.getScaleInstance(scale, scale));
         outline = poly;
 
-        poly.transform(AffineTransform.getScaleInstance(scale, scale));
     }
 
     public void nearShip (boolean nearbyShip)
@@ -96,7 +103,7 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         {
             Participant.expire(this);
 
-            controller.alienDestroyed(getX(), getY());
+            controller.alienDestroyed(getX(), getY(),small);
 
         }
         // TODO Auto-generated method stub
@@ -109,9 +116,12 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         if (payload.equals("turn"))
         {
 
+            if (!small & !controller.testMode)
+            {
             Random randomDirection = new Random();
             if (randomDirection.nextInt(3) == 0)
             {
+                
                 setVelocity(5, this.direction);
                 setVelocity(5, this.getDirection() - Math.PI / 4);
 
@@ -126,7 +136,29 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
                 setVelocity(5, this.direction);
                 setVelocity(5, this.getDirection() + Math.PI / 4);
             }
-            createAlienShipOutline(false);
+            }
+            if (small & !controller.testMode)
+            {
+                Random randomDirection = new Random();
+                if (randomDirection.nextInt(3) == 0)
+                {
+                    
+                    setVelocity(10, this.direction);
+                    setVelocity(10, this.getDirection() - Math.PI / 4);
+
+                }
+                else if (randomDirection.nextInt(3) == 1)
+                {
+                    setVelocity(10, this.direction);
+                    setVelocity(10, this.getDirection());
+                }
+                else if (randomDirection.nextInt(3) == 2)
+                {
+                    setVelocity(10, this.direction);
+                    setVelocity(10, this.getDirection() + Math.PI / 4);
+                }
+            }
+            createAlienShipOutline(small);
 
             Random turny = new Random();
             new ParticipantCountdownTimer(this, "turn", turny.nextInt(1000) + 500);
@@ -135,10 +167,10 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         {
             if (nearbyShip)
             {
-                controller.placeAlienBullet();
+                controller.placeAlienBullet(small);
             }
+            
             Random turny = new Random();
-
             new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 2000);
 
         }
