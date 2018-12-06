@@ -247,8 +247,12 @@ public class Controller implements KeyListener, ActionListener
         addParticipant(new Debris(false, x, y, this));
         addParticipant(new Debris(false, x, y, this));
         addParticipant(new Debris(false, x, y, this));
-        addParticipant(new Debris(false, x, y, this));
-        addParticipant(new Debris(false, x, y, this));
+
+        if (isShip)
+        {
+            addParticipant(new Debris(true, x, y, this));
+            addParticipant(new Debris(true, x, y, this));
+        }
     }
 
     /**

@@ -32,8 +32,14 @@ public class Debris extends Participant
         setRotation(2 * Math.PI * RANDOM.nextDouble());
         if (isShip)
         {
-            
+            Path2D.Double poly = new Path2D.Double();
+            poly.moveTo(21, 0);
+            poly.lineTo(-21, 12);
+            poly.closePath();
+            outline = poly;
         }
+        else
+        {
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1,0);
         poly.lineTo(-1, 1);
@@ -43,6 +49,7 @@ public class Debris extends Participant
         poly.lineTo(-1, 1);
         poly.closePath();
         outline = poly;
+        }
         startTime = System.currentTimeMillis();
         new ParticipantCountdownTimer(this, "travelTime", 1000);
     }
