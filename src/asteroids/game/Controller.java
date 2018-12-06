@@ -283,6 +283,9 @@ public class Controller implements KeyListener, ActionListener
 
         // Give focus to the game screen
         display.requestFocusInWindow();
+        
+        // Play background music
+        //beat1Clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     /**
@@ -326,7 +329,7 @@ public class Controller implements KeyListener, ActionListener
         {
             scheduleTransition(END_DELAY);
             level = level + 1;
-            placeAsteroids(level);
+            
         }
 
         if (size == 2)
@@ -403,7 +406,7 @@ public class Controller implements KeyListener, ActionListener
         {
             initialScreen();
         }
-
+        
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {
@@ -438,6 +441,11 @@ public class Controller implements KeyListener, ActionListener
             if (alienShip != null)
             {
                 alienShip.nearShip(shipNearAlien);
+                saucerBigClip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+            else
+            {
+                saucerBigClip.stop();
             }
             // Refresh screen
             display.refresh();
