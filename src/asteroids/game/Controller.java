@@ -239,16 +239,16 @@ public class Controller implements KeyListener, ActionListener
      * @param x
      * @param y
      */
-    private void placeDebris (double x, double y)
+    private void placeDebris (boolean isShip, double x, double y)
     {
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
-        addParticipant(new Debris(x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
+        addParticipant(new Debris(false, x, y, this));
     }
 
     /**
@@ -306,7 +306,7 @@ public class Controller implements KeyListener, ActionListener
     public void shipDestroyed ()
     {
 
-        placeDebris(ship.getX(), ship.getY());
+        placeDebris(true, ship.getX(), ship.getY());
         bangShipClip.loop(1);
         // Null out the ship
         ship = null;
@@ -316,6 +316,7 @@ public class Controller implements KeyListener, ActionListener
         turningLeft = false;
         accelerating = false;
         firing = false;
+        
         // Decrement lives
         lives--;
 
@@ -330,7 +331,7 @@ public class Controller implements KeyListener, ActionListener
      */
     public void asteroidDestroyed (int size, double xVal, double yVal)
     {
-        placeDebris(xVal, yVal);
+        placeDebris(false, xVal, yVal);
         // If all the asteroids are gone, schedule a transition
         if (pstate.countAsteroids() == 0 && alienShip == null)
         {
@@ -343,16 +344,26 @@ public class Controller implements KeyListener, ActionListener
         {
             bangLargeClip.loop(1);
             score = score + ASTEROID_SCORE[2];
-            addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
-            addParticipant(new Asteroid(1, 1, xVal, yVal, 5, this));
+            
+            //Pick random speeds for new asteroids
+            Random rand = new Random();
+            int speedy = rand.nextInt(2) + 3;
+            addParticipant(new Asteroid(1, 1, xVal, yVal, speedy, this));
+            int speeder = rand.nextInt(2) + 3;
+            addParticipant(new Asteroid(1, 1, xVal, yVal, speeder, this));
         }
 
         if (size == 1)
         {
             bangMediumClip.loop(1);
             score = score + ASTEROID_SCORE[1];
-            addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
-            addParticipant(new Asteroid(3, 0, xVal, yVal, 8, this));
+            
+            //Pick random speed for asteroids
+            Random rand = new Random();
+            int speedy = rand.nextInt(3) + 5;
+            addParticipant(new Asteroid(3, 0, xVal, yVal, speedy, this));
+            int speeder = rand.nextInt(3) + 5;
+            addParticipant(new Asteroid(3, 0, xVal, yVal, speeder, this));
         }
         if (size == 0)
         {
@@ -367,7 +378,7 @@ public class Controller implements KeyListener, ActionListener
     public void alienDestroyed (double x, double y)
     {
 
-        placeDebris(alienShip.getX(), alienShip.getY());
+        placeDebris(false, alienShip.getX(), alienShip.getY());
         bangAlienShipClip.loop(1);
         alienShip = null;
         noAliens();

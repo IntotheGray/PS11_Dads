@@ -24,12 +24,16 @@ public class Debris extends Participant
      * @param y
      * @param controller
      */
-    public Debris(double x, double y, Controller controller)
+    public Debris(boolean isShip, double x, double y, Controller controller)
     {
         this.controller = controller;
         setPosition(x,y);
         setVelocity(1, RANDOM.nextDouble() * 2 * Math.PI);
         setRotation(2 * Math.PI * RANDOM.nextDouble());
+        if (isShip)
+        {
+            
+        }
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1,0);
         poly.lineTo(-1, 1);
