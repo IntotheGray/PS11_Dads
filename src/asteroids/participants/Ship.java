@@ -7,7 +7,6 @@ import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
-import javax.swing.Timer;
 import java.util.Random;
 
 /**
@@ -78,12 +77,16 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienDestroy
         transformPoint(point);
         return point.getY();
     }
-
+    
+    /**
+     * Returns the outline of ship
+     */
     @Override
     protected Shape getOutline ()
     {
         if (controller.getAcc())
         {
+            //Used to simulate the flicker when accelerating shown on demo
             Random rand = new Random();
             int n = rand.nextInt(2) + 1;
             if (n == 1)

@@ -310,7 +310,12 @@ public class Controller implements KeyListener, ActionListener
         bangShipClip.loop(1);
         // Null out the ship
         ship = null;
-
+        
+        // Ensure all booleans are false
+        turningRight = false;
+        turningLeft = false;
+        accelerating = false;
+        firing = false;
         // Decrement lives
         lives--;
 
@@ -413,19 +418,19 @@ public class Controller implements KeyListener, ActionListener
         else if (e.getSource() == refreshTimer)
         {
 
-            if (turningRight == true && !ship.isExpired())
+            if (turningRight == true && ship != null)
             {
                 ship.turnRight();
             }
-            if (turningLeft == true && !ship.isExpired())
+            if (turningLeft == true &&  ship != null)
             {
                 ship.turnLeft();
             }
-            if (accelerating == true && !ship.isExpired())
+            if (accelerating == true && ship != null)
             {
                 ship.accelerate();
             }
-            if (firing == true && !ship.isExpired())
+            if (firing == true && ship != null)
             {
                 placeBullet();
                 bullet.shoot();
