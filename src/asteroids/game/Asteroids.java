@@ -28,12 +28,12 @@ public class Asteroids
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (choice == 0)
         {
-            new Controller(false);
+            new Controller();
         }
         else if (choice == 1)
         {
             JOptionPane.showMessageDialog(null, "Entering testing environment");
-            new Controller(true);
+            new Controller();
         }
     }
 }

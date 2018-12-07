@@ -30,17 +30,14 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         this.direction = direction;
         setPosition(x, y);
 
-        if (controller.testMode)
-        {
-            setPosition(350,450);
-        }
+
         createAlienShipOutline(small);
         setDirection(direction);
-        if (this.small & !controller.testMode)
+        if (this.small)
         {
             setVelocity(10, this.getDirection());
         }
-        else if (!this.small & !controller.testMode)
+        else if (!this.small)
         {
             setVelocity(5, this.getDirection());
         }
@@ -116,7 +113,7 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         if (payload.equals("turn"))
         {
 
-            if (!small & !controller.testMode)
+            if (!small)
             {
             Random randomDirection = new Random();
             if (randomDirection.nextInt(3) == 0)
@@ -137,7 +134,7 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
                 setVelocity(5, this.getDirection() + Math.PI / 4);
             }
             }
-            if (small & !controller.testMode)
+            if (small)
             {
                 Random randomDirection = new Random();
                 if (randomDirection.nextInt(3) == 0)

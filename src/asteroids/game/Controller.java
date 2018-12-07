@@ -59,7 +59,6 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
-    public boolean testMode;
 
     private controllerCountdownTimer alienTimes;
     /**
@@ -93,10 +92,10 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Constructs a controller to coordinate the game and screen
      */
-    public Controller (boolean testMode)
+    public Controller ()
     {
         this.small = false;
-        this.testMode = testMode;
+        
         // Initialize the ParticipantState
         pstate = new ParticipantState();
 
@@ -177,8 +176,7 @@ public class Controller implements KeyListener, ActionListener
      */
     private void placeAsteroids (int level)
     {
-        if (testMode == false)
-        {
+        
 
             if (alienTimes !=null)
             {
@@ -203,7 +201,7 @@ public class Controller implements KeyListener, ActionListener
                     }
                 }
             }
-        }
+      
     }
 
     private void placeBullet ()
@@ -308,10 +306,6 @@ public class Controller implements KeyListener, ActionListener
         level = 1;
 
         
-        if (testMode)
-        {
-            new controllerCountdownTimer(RANDOM.nextInt(500), this);
-        }
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
