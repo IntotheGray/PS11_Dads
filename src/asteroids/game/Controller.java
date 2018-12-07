@@ -78,6 +78,7 @@ public class Controller implements KeyListener, ActionListener
     /**
      * all clips need for sounds
      */
+
     private Clip bangAlienShipClip;
     private Clip bangLargeClip;
     private Clip bangMediumClip;
@@ -89,7 +90,10 @@ public class Controller implements KeyListener, ActionListener
     private Clip saucerBigClip;
     private Clip thrustClip;
     private Clip saucerSmallClip;
-
+    
+    /** Beat Delay*/
+    private int beatDelay = 1000;
+    
     /**
      * Constructs a controller to coordinate the game and screen
      */
@@ -407,7 +411,14 @@ public class Controller implements KeyListener, ActionListener
         alienShip = null;
         noAliens();
 
+        if (small)
+        {
+            score = score + ALIENSHIP_SCORE[0];
+        }
+        else
+        {
         score = score + ALIENSHIP_SCORE[1];
+        }
 
         // Test if a new level should start
         if (pstate.countAsteroids() == 0)
@@ -700,7 +711,11 @@ public class Controller implements KeyListener, ActionListener
     {
         if (lives > 0)
         {
-            new BeatCountdownTimer(whatBeat, 1000, this);
+            new BeatCountdownTimer(whatBeat, beatDelay, this);
+            if (beatDelay > 200)
+            {
+                beatDelay = beatDelay - 10;
+            }  
         }
         else
         {
