@@ -23,6 +23,8 @@ public class Asteroid extends Participant implements ShipDestroyer, BulletDestro
 
     /** The game controller */
     private Controller controller;
+    
+    private int health;
 
     /**
      * Throws an IllegalArgumentException if size or variety is out of range.
@@ -46,8 +48,24 @@ public class Asteroid extends Participant implements ShipDestroyer, BulletDestro
         // Create the asteroid
         this.controller = controller;
         this.size = size;
+        this.health = this.size + 1;
         setPosition(x, y);
+        if (this.controller.difficulty == 1 )
+        {
         setVelocity(speed, RANDOM.nextDouble() * 2 * Math.PI);
+        }
+        else if (this.controller.difficulty == 0 )
+        {
+        setVelocity(speed - 1, RANDOM.nextDouble() * 2 * Math.PI);
+        }
+        else if (this.controller.difficulty == 2 )
+        {
+        setVelocity(speed + 2, RANDOM.nextDouble() * 2 * Math.PI);
+        }
+        else if (this.controller.difficulty == 3 )
+        {
+        setVelocity(speed + 4, RANDOM.nextDouble() * 2 * Math.PI);
+        }
         setRotation(2 * Math.PI * RANDOM.nextDouble());
         createAsteroidOutline(variety, size);
     }
@@ -164,13 +182,26 @@ public class Asteroid extends Participant implements ShipDestroyer, BulletDestro
     @Override
     public void collidedWith (Participant p)
     {
-        if (p instanceof AsteroidDestroyer)
+        if (p instanceof AsteroidDestroyer && (this.controller.difficulty < 2))
         {
             // Expire the asteroid
             Participant.expire(this);
 
             // Inform the controller
             controller.asteroidDestroyed(getSize(), getX(), getY());
+        }
+        if (p instanceof AsteroidDestroyer && (this.controller.difficulty > 1))
+        {
+            // Expire the asteroid
+            this.health = this.health - 1;
+            if (health <= 0)
+            {
+            Participant.expire(this);
+         // Inform the controller
+            controller.asteroidDestroyed(getSize(), getX(), getY());
+            }
+
+
         }
     }
 

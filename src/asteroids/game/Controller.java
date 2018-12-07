@@ -53,10 +53,10 @@ public class Controller implements KeyListener, ActionListener
     private long transitionTime;
 
     /** Number of lives left */
-    private int lives;
+    protected int lives;
 
     /** The game display */
-    private Display display;
+    protected Display display;
 
     private controllerCountdownTimer alienTimes;
     /**
@@ -66,16 +66,21 @@ public class Controller implements KeyListener, ActionListener
     /**
      * keep track of ship score
      */
-    private int score;
+    protected int score;
 
     /** Current level */
-    private int level;
+    protected int level;
 
     public boolean small;
+    public Object payload;
+    private Clip laugh;
     /**
      * all clips need for sounds
      */
 
+    public double followX;
+    public double followY;
+    private controllerCountdownTimer followTimer;
     private Clip bangAlienShipClip;
     private Clip bangLargeClip;
     private Clip bangMediumClip;
@@ -95,11 +100,28 @@ public class Controller implements KeyListener, ActionListener
     /** Boolean if Enhancements is clicked */
     protected boolean enhanced;
 
+    public int difficulty;
     /**
      * Constructs a controller to coordinate the game and screen
      */
-    public Controller ()
+    public Controller (int payload)
     {
+        if (payload == 1)        
+        {
+            this.difficulty = 1;
+        }
+        if (payload == 0)
+        {
+            this.difficulty = 0;
+        }
+        if (payload == 2)
+        {
+            this.difficulty = 2;
+        }
+        if (payload == 3)
+        {
+            this.difficulty = 3;
+        }
         this.small = false;
 
         // Initialize the ParticipantState
@@ -133,7 +155,7 @@ public class Controller implements KeyListener, ActionListener
         saucerBigClip = createClip("/sounds/saucerBig.wav");
         thrustClip = createClip("/sounds/thrust.wav");
         fireAndFlamesClip = createClip("/sounds/fireAndFlames.wav");
-
+        laugh = createClip("/sounds/laugh.wav");
     }
 
     /**
@@ -181,18 +203,34 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Places an asteroid near one corner of the screen. Gives it a random velocity and rotation.
      */
-    private void placeAsteroids (int level)
+    protected void placeAsteroids (int level)
     {
 
         if (alienTimes != null)
         {
             alienTimes.restart();
         }
+        if (followTimer != null)
+        {
+            followTimer.restart();
+        }
         addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
         addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        if (difficulty > 0 && !(difficulty == 3))
+        {
         addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
         addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
-
+        }
+        if (difficulty > 1&& !(difficulty == 3))
+        {
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
+        if (difficulty > 2 && !(difficulty == 3))
+        {
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
         if (level > 1)
         {
             for (int i = 1; i < level; i++)
@@ -281,7 +319,7 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Clears the screen so that nothing is displayed
      */
-    private void clear ()
+    protected void clear ()
     {
         if (alienTimes != null)
         {
@@ -297,6 +335,7 @@ public class Controller implements KeyListener, ActionListener
      */
     private void initialScreen ()
     {
+
         // Clear the screen
         clear();
 
@@ -364,6 +403,7 @@ public class Controller implements KeyListener, ActionListener
         if (pstate.countAsteroids() == 0 && alienShip == null)
         {
             scheduleTransition(END_DELAY);
+            
             level = level + 1;
 
             // Only executed if enhanced
@@ -511,12 +551,20 @@ public class Controller implements KeyListener, ActionListener
             }
 
             // It may be time to make a game transition
-
+            
+            
+            
+            
             performTransition();
             if (level > 1 && (alienTimes == null))
             {
                 controllerCountdownTimer alienTimes = new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
                 this.alienTimes = alienTimes;
+            }
+            if (level > 1 && (followTimer == null))
+            {
+                controllerCountdownTimer followTimer = new controllerCountdownTimer(RANDOM.nextInt(1000),"tracer", this);
+                this.followTimer = followTimer;
             }
 
             // Move the participants to their new locations
@@ -683,6 +731,7 @@ public class Controller implements KeyListener, ActionListener
             accelerating = false;
             thrustClip.stop();
             thrustClip.setFramePosition(0);
+            
 
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
@@ -735,9 +784,25 @@ public class Controller implements KeyListener, ActionListener
         alienTimes.restart();
     }
 
-    public void countdownComplete ()
+    public void countdownComplete (Object payload)
     {
+        if (payload == "alien")
+        {
         placeAlienShip();
+        }
+        else if (payload == "tracer" && (ship != null))
+        {
+            //im already tracer
+            followX = ship.getX();
+            followY = ship.getY();
+            followTimer.restart();
+
+        }
+        else if (payload == "tracer" && (ship != null))
+        {
+            
+            followTimer.restart();
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package asteroids.game;
 
 import java.util.Random;
+import asteroids.game.Controller;
 
 /**
  * Provides constants that govern the game.
@@ -100,6 +101,7 @@ public class Constants
     /**
      * Score earned for asteroids of size 0, 1, and 2.
      */
+
     public final static int[] ASTEROID_SCORE = { 100, 50, 20 };
 
     /**
