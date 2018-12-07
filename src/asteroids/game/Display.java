@@ -49,6 +49,7 @@ public class Display extends JFrame
         pack();
 
         // Connect the controller to the start button
+
         startGame.addActionListener(controller);
     }
 
