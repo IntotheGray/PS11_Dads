@@ -22,14 +22,24 @@ public class ParticipantState
     /** Participants that are waiting to be added to the game */
     private Set<Participant> pendingAdds;
 
+    public int difficulty;
+    
+    public boolean invulnerable;
+    
+    private Controller controller;
     /**
      * Creates an empty ParticipantState.
      */
-    public ParticipantState ()
+    public ParticipantState (int difficulty,Controller controller)
     {
         // No participants at the start
         participants = new LinkedList<Participant>();
         pendingAdds = new HashSet<Participant>();
+        this.difficulty = difficulty;
+        
+        this.controller = controller;
+        
+        
     }
 
     /**
@@ -209,7 +219,7 @@ public class ParticipantState
                     
                     if (!p2.isExpired() && p1.overlaps(p2))
                     {
-                        if (p1 instanceof Asteroid && p2 instanceof Asteroid)
+                        if (p1 instanceof Asteroid && p2 instanceof Asteroid && (this.difficulty != 1 ))
                         {
                             if (p1.canCollides(p2) && p2.canCollides(p1))
                             {
@@ -218,6 +228,10 @@ public class ParticipantState
                             }
                             break;
                            
+                        }
+                        if ((p1 instanceof Ship || p2 instanceof Ship ) && (controller.cantLoseLives))
+                        {
+                            break;
                         }
                         p1.collidedWith(p2);
                         p2.collidedWith(p1);

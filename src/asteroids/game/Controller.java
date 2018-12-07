@@ -108,6 +108,8 @@ public class Controller implements KeyListener, ActionListener
     public int difficulty;
 
     public boolean bullets = false;
+    
+    public boolean cantLoseLives = false;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -132,7 +134,7 @@ public class Controller implements KeyListener, ActionListener
         }
         this.small = false;
         // Initialize the ParticipantState
-        pstate = new ParticipantState();
+        pstate = new ParticipantState( difficulty,this);
 
         // Set up the refresh timer.
         refreshTimer = new Timer(FRAME_INTERVAL, this);
@@ -209,6 +211,22 @@ public class Controller implements KeyListener, ActionListener
         ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
         addParticipant(ship);
         display.setLegend("");
+        if (difficulty == 0)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(5000,"invulnerable", this);
+        }
+        if (difficulty == 2)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(3000,"invulnerable", this);
+        }
+        if (difficulty == 3)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(1000,"invulnerable", this);
+        }
+
     }
 
     /**
@@ -227,17 +245,17 @@ public class Controller implements KeyListener, ActionListener
         }
         addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
         addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
-        if (difficulty > 0 && !(difficulty == 3))
+        if (difficulty > 0 )
         {
             addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
         }
-        if (difficulty > 1 && !(difficulty == 3))
+        if (difficulty > 1 )
         {
             addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
         }
-        if (difficulty > 2 && !(difficulty == 3))
+        if (difficulty > 2  )
         {
             addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
@@ -978,6 +996,10 @@ public class Controller implements KeyListener, ActionListener
         {
 
             followTimer.restart();
+        }
+        else if (payload == "invulnerable" && (ship != null))
+        {
+            this.cantLoseLives = false;
         }
     }
 

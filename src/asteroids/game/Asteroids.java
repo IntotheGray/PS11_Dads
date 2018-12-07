@@ -45,7 +45,9 @@ public class Asteroids
                 }
                 else if (choice2 == 2)
                 {
-                    JOptionPane.showMessageDialog(null, "Welcome to hell amigo");
+                    String[] option3 = {"thanks"};
+                    JOptionPane.showOptionDialog(null, "Welcome to hell amigo", "oh no",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,option3, 0);
+                    
                     new Controller(3);
                 }
 

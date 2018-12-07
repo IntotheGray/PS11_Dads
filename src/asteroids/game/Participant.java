@@ -344,4 +344,5 @@ public abstract class Participant
     {
         this.bool = null;
     }
+    
 }
