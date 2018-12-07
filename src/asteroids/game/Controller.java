@@ -839,13 +839,20 @@ public class Controller implements KeyListener, ActionListener
     }
 
     /**
-     * Returns 
+     * called to switch enhanced to true
      */
     public void switchEnhanced ()
     {
         enhanced = true;
     }
     
+    /**
+     * Returns if enhanced = true
+     */
+    public boolean isEnhanced()
+    {
+        return enhanced;
+    }
     /**
      * Creates an audio clip from a sound file.
      */

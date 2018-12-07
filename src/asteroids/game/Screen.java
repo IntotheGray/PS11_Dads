@@ -18,6 +18,9 @@ public class Screen extends JPanel
 
     /** Game controller */
     private Controller controller;
+    
+    /** Boolean to keep track of if Enhanced*/
+    private boolean isEnhanced = false;
 
     /**
      * Creates an empty screen
@@ -42,6 +45,13 @@ public class Screen extends JPanel
         this.legend = legend;
     }
 
+    /**
+     * Set Enhanced
+     */
+    public void setEnhanced ()
+    {
+        isEnhanced = true;
+    }
     /**
      * Paint the participants onto this panel
      */
@@ -75,9 +85,11 @@ public class Screen extends JPanel
         g2.drawString(Integer.toString(controller.getScore()), height, height);
         g2.drawString(Integer.toString(controller.getLevel()), (750 - height), height);
 
-        if (controller.)
+        
         Graphics2D g3 = (Graphics2D) graphics;
+        
         g3.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+        
         
         
         

@@ -67,4 +67,9 @@ public class Display extends JFrame
     {
         screen.setLegend(s);
     }
+    
+    public void setEnhanced()
+    {
+        screen.setEnhanced();
+    }
 }
