@@ -1,2 +1,5 @@
 Put detailed information about all extra credit enhancements here.  
 
+1. Added condition where if player has reached a level (a multiple of 3) and their lives is below 3 adds a life.
+
+2. Added some sick background music

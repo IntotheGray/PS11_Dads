@@ -15,7 +15,6 @@ import asteroids.participants.Ship;
 import asteroids.participants.Debris;
 import javax.sound.sampled.*;
 
-
 /**
  * Controls a game of Asteroids.
  */
@@ -59,7 +58,6 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
-
     private controllerCountdownTimer alienTimes;
     /**
      * The alien ship if one is active
@@ -90,20 +88,20 @@ public class Controller implements KeyListener, ActionListener
     private Clip thrustClip;
     private Clip saucerSmallClip;
     private Clip fireAndFlamesClip;
-    
-    /** Beat Delay*/
+
+    /** Beat Delay */
     private int beatDelay = 1000;
-    
-    /** Boolean if Enhancements is clicked*/
-    private boolean enhanced = false;
-    
+
+    /** Boolean if Enhancements is clicked */
+    protected boolean enhanced;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
     public Controller ()
     {
         this.small = false;
-        
+
         // Initialize the ParticipantState
         pstate = new ParticipantState();
 
@@ -185,32 +183,31 @@ public class Controller implements KeyListener, ActionListener
      */
     private void placeAsteroids (int level)
     {
-        
 
-            if (alienTimes !=null)
-            {
+        if (alienTimes != null)
+        {
             alienTimes.restart();
-            }
-            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
+        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
 
-            if (level > 1)
+        if (level > 1)
+        {
+            for (int i = 1; i < level; i++)
             {
-                for (int i = 1; i < level; i++)
+                if ((i % 2) != 0)
                 {
-                    if ((i % 2) != 0)
-                    {
-                        addParticipant(new Asteroid(0, 2, SIZE - (EDGE_OFFSET * 2), SIZE - EDGE_OFFSET, 3, this));
-                    }
-                    else
-                    {
-                        addParticipant(new Asteroid(0, 2, (EDGE_OFFSET * 2), EDGE_OFFSET, 3, this));
-                    }
+                    addParticipant(new Asteroid(0, 2, SIZE - (EDGE_OFFSET * 2), SIZE - EDGE_OFFSET, 3, this));
+                }
+                else
+                {
+                    addParticipant(new Asteroid(0, 2, (EDGE_OFFSET * 2), EDGE_OFFSET, 3, this));
                 }
             }
-      
+        }
+
     }
 
     private void placeBullet ()
@@ -314,7 +311,6 @@ public class Controller implements KeyListener, ActionListener
         score = 0;
         level = 1;
 
-        
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -370,6 +366,15 @@ public class Controller implements KeyListener, ActionListener
             scheduleTransition(END_DELAY);
             level = level + 1;
 
+            // Only executed if enhanced
+            // Adds life for reaching a level that is a multiple of 3
+            if (this.enhanced)
+            {
+                if (((level%3) == 0) && level != 1 && lives < 3)
+                {
+                    lives = lives + 1;
+                }
+            }
         }
 
         if (size == 2)
@@ -421,7 +426,7 @@ public class Controller implements KeyListener, ActionListener
         }
         else
         {
-        score = score + ALIENSHIP_SCORE[1];
+            score = score + ALIENSHIP_SCORE[1];
         }
 
         // Test if a new level should start
@@ -429,6 +434,16 @@ public class Controller implements KeyListener, ActionListener
         {
             scheduleTransition(END_DELAY);
             level = level + 1;
+            
+            // Only executed if enhanced
+            // Adds life for reaching a level that is a multiple of 3
+            if (this.enhanced)
+            {
+                if (((level%3) == 0) && level != 1 && lives < 3)
+                {
+                    lives = lives + 1;
+                }
+            }
         }
 
     }
@@ -462,7 +477,7 @@ public class Controller implements KeyListener, ActionListener
         if (e.getSource() instanceof JButton)
         {
             initialScreen();
-            if (enhanced)
+            if (this.enhanced)
             {
                 fireAndFlamesClip.loop(Clip.LOOP_CONTINUOUSLY);
             }
@@ -470,7 +485,7 @@ public class Controller implements KeyListener, ActionListener
             {
                 playBeats(1);
             }
-            
+
         }
 
         // Time to refresh the screen and deal with keyboard input
@@ -520,7 +535,7 @@ public class Controller implements KeyListener, ActionListener
                 {
                     saucerBigClip.loop(Clip.LOOP_CONTINUOUSLY);
                 }
-                
+
             }
             else
             {
@@ -736,7 +751,7 @@ public class Controller implements KeyListener, ActionListener
             if (beatDelay > 200)
             {
                 beatDelay = beatDelay - 10;
-            }  
+            }
         }
         else
         {
@@ -800,10 +815,7 @@ public class Controller implements KeyListener, ActionListener
     {
         return accelerating;
     }
-    
-    /**
-     * Method called to switch enhanced to true
-     */
+
     public void switchEnhanced()
     {
         enhanced = true;
