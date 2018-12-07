@@ -57,8 +57,8 @@ public class SoundDemo extends JFrame implements ActionListener
         // We create the clips in advance so that there will be no delay
         // when we need to play them back. Note that the actual wav
         // files are stored in the "sounds" project.
-        fireClip = createClip("/sounds/fire.wav");
-        smallSaucerClip = createClip("/sounds/saucerSmall.wav");
+        fireClip = createClip("/sounds/beat1.wav");
+        smallSaucerClip = createClip("/sounds/beat2.wav");
     }
 
     /**
@@ -118,7 +118,7 @@ public class SoundDemo extends JFrame implements ActionListener
                 smallSaucerClip.stop();
             }
             smallSaucerClip.setFramePosition(0);
-            smallSaucerClip.loop(10);            
+            smallSaucerClip.loop(1);            
         }
     }
 }

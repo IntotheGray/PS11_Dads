@@ -14,6 +14,7 @@ import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
 import asteroids.participants.Debris;
 import javax.sound.sampled.*;
+import java.util.TimerTask;
 
 /**
  * Controls a game of Asteroids.
@@ -67,7 +68,7 @@ public class Controller implements KeyListener, ActionListener
      * keep track of ship score
      */
     private int score;
-    
+
     /** Current level */
     private int level;
 
@@ -85,6 +86,7 @@ public class Controller implements KeyListener, ActionListener
     private Clip saucerBigClip;
     private Clip thrustClip;
     private Clip saucerSmallClip;
+
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -176,15 +178,15 @@ public class Controller implements KeyListener, ActionListener
         {
 
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
-            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
 
             if (level > 1)
             {
                 for (int i = 1; i < level; i++)
                 {
-                    if((i%2) != 0)
+                    if ((i % 2) != 0)
                     {
                         addParticipant(new Asteroid(0, 2, SIZE - (EDGE_OFFSET * 2), SIZE - EDGE_OFFSET, 3, this));
                     }
@@ -292,8 +294,6 @@ public class Controller implements KeyListener, ActionListener
         // Give focus to the game screen
         display.requestFocusInWindow();
 
-        // Play background music
-        // beat1Clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     /**
@@ -309,18 +309,18 @@ public class Controller implements KeyListener, ActionListener
      */
     public void shipDestroyed ()
     {
-
+        thrustClip.stop();
         placeDebris(true, ship.getX(), ship.getY());
         bangShipClip.loop(1);
         // Null out the ship
         ship = null;
-        
+
         // Ensure all booleans are false
         turningRight = false;
         turningLeft = false;
         accelerating = false;
         firing = false;
-        
+
         // Decrement lives
         lives--;
 
@@ -348,26 +348,26 @@ public class Controller implements KeyListener, ActionListener
         {
             bangLargeClip.loop(1);
             score = score + ASTEROID_SCORE[2];
-            
-            //Pick random speeds for new asteroids
+
+            // Pick random speeds for new asteroids
             Random rand = new Random();
             int speedy = rand.nextInt(2) + 3;
             addParticipant(new Asteroid(1, 1, xVal, yVal, speedy, this));
             int speeder = rand.nextInt(2) + 3;
-            addParticipant(new Asteroid(1, 1, xVal, yVal, speeder, this));
+            addParticipant(new Asteroid(2, 1, xVal, yVal, speeder, this));
         }
 
         if (size == 1)
         {
             bangMediumClip.loop(1);
             score = score + ASTEROID_SCORE[1];
-            
-            //Pick random speed for asteroids
+
+            // Pick random speed for asteroids
             Random rand = new Random();
             int speedy = rand.nextInt(3) + 5;
-            addParticipant(new Asteroid(3, 0, xVal, yVal, speedy, this));
+            addParticipant(new Asteroid(0, 0, xVal, yVal, speedy, this));
             int speeder = rand.nextInt(3) + 5;
-            addParticipant(new Asteroid(3, 0, xVal, yVal, speeder, this));
+            addParticipant(new Asteroid(1, 0, xVal, yVal, speeder, this));
         }
         if (size == 0)
         {
@@ -427,6 +427,7 @@ public class Controller implements KeyListener, ActionListener
         if (e.getSource() instanceof JButton)
         {
             initialScreen();
+            playBeats(1);
         }
 
         // Time to refresh the screen and deal with keyboard input
@@ -437,7 +438,7 @@ public class Controller implements KeyListener, ActionListener
             {
                 ship.turnRight();
             }
-            if (turningLeft == true &&  ship != null)
+            if (turningLeft == true && ship != null)
             {
                 ship.turnLeft();
             }
@@ -469,6 +470,9 @@ public class Controller implements KeyListener, ActionListener
             {
                 saucerBigClip.stop();
             }
+
+            // Play background music
+
             // Refresh screen
             display.refresh();
         }
@@ -665,6 +669,45 @@ public class Controller implements KeyListener, ActionListener
     }
 
     /**
+     * Called to start background beat
+     */
+    public void playBeats (int whatBeat)
+    {
+        if (lives > 0)
+        {
+            new BeatCountdownTimer(whatBeat, 1000, this);
+        }
+        else
+        {
+            beat1Clip.stop();
+            beat2Clip.stop();
+            return;
+        }
+    }
+
+    /**
+     * Called from beatCountdownTimer to play first beat
+     */
+    public void beat1Countdown ()
+    {
+        beat2Clip.stop();
+        beat2Clip.setFramePosition(0);
+        beat1Clip.start();
+        playBeats(2);
+    }
+
+    /**
+     * Called from beatCountdownTimer to play second beat
+     */
+    public void beat2Countdown ()
+    {
+        beat1Clip.stop();
+        beat1Clip.setFramePosition(0);
+        beat2Clip.start();
+        playBeats(1);
+    }
+
+    /**
      * returns the current score
      * 
      */
@@ -692,10 +735,11 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Returns boolean accelerating
      */
-    public boolean getAcc()
+    public boolean getAcc ()
     {
         return accelerating;
     }
+
     /**
      * Creates an audio clip from a sound file.
      */
