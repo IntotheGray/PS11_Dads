@@ -37,7 +37,7 @@ public class Display extends JFrame
         JPanel controls = new JPanel();
 
         // The button that starts the game
-        JButton startGame = new JButton(START_LABEL);
+        JButton startGame = new JButton("Start");
         controls.add(startGame);
 
         // Organize everything

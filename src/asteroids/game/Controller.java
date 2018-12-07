@@ -366,6 +366,10 @@ public class Controller implements KeyListener, ActionListener
         lives = 3;
         score = 0;
         level = 1;
+        if (bullets)
+        {
+            lives = 3;
+        }
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -935,6 +939,15 @@ public class Controller implements KeyListener, ActionListener
             firing = false;
             fireClip.stop();
             fireClip.setFramePosition(0);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_R && ship!= null)
+        {
+            lives = 0;
+            Ship.expire(ship);
+            this.shipDestroyed();
+            ship = null;
+            finalScreen();
+            
         }
         
         
