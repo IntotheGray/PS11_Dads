@@ -72,9 +72,7 @@ public class Controller implements KeyListener, ActionListener
     /** Current level */
     private int level;
 
-    /**
-     * all clips need for sounds
-     */
+    /** all clips need for sounds */
     private Clip bangAlienShipClip;
     private Clip bangLargeClip;
     private Clip bangMediumClip;
