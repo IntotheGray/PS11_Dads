@@ -32,8 +32,8 @@ public class Asteroids
         }
         else if (choice == 1)
         {
-            JOptionPane.showMessageDialog(null, "Entering testing environment");
-            new Controller();
+            //JOptionPane.showMessageDialog(null, "Welcome to hell amigo");
+            new EnhanceController();
         }
     }
 }

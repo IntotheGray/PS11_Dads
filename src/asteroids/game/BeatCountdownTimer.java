@@ -13,6 +13,7 @@ public class BeatCountdownTimer implements ActionListener
     //Instance variable to determine what beat called next
     private int whatBeats;
 
+    
     public BeatCountdownTimer (int whatBeat, int msecs, Controller controller)
     {
         this.controller = controller;
