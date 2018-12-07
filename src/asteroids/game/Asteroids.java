@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
  * 
  * @author Eric J. Marsh, Jack Ronnie Skate Fast...
  */
-public class Asteroids
+public class Asteroids 
 {
     /**
      * Launches a dialog that lets the user choose between a classic and an enhanced game of Asteroids.
@@ -34,6 +34,7 @@ public class Asteroids
         {
             //JOptionPane.showMessageDialog(null, "Welcome to hell amigo");
             new EnhanceController();
+            
         }
     }
 }

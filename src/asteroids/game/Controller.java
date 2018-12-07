@@ -207,9 +207,9 @@ public class Controller implements KeyListener, ActionListener
                 }
             }
         }
-
     }
 
+    
     private void placeBullet ()
     {
         if (pstate.bulletCount() < BULLET_LIMIT)

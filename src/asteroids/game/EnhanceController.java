@@ -5,7 +5,7 @@ import asteroids.game.Controller;
 public class EnhanceController extends Controller
 {
 
-    public void enhancedController()
+    public EnhanceController()
     {
         switchEnhanced();
     }
