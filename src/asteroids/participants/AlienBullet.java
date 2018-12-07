@@ -24,13 +24,11 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
     private long endTimes;
     private Controller controller;
 
-    public AlienBullet (double x, double y, double Direction, Controller controller, AlienShip alienShip)
+    public AlienBullet (double x, double y, boolean small, Controller controller, AlienShip alienShip, Ship ship)
     {
-        this.direction = Direction;
-        this.controller = controller;
-        this.alienShip = alienShip;
 
         setPosition(x, y);
+
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1, 0);
 
@@ -41,12 +39,38 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
         poly.closePath();
         outline = poly;
         startTimes = System.currentTimeMillis();
+        if (!small)
+        {
+
+            this.setDirection(RANDOM.nextDouble() * 2 * Math.PI);
+        }
+        else if (small)
+        {
+            double xD = ship.getX() - x;
+            double yD = ship.getY() - y;
+            // System.out.println(this.getDirection());
+
+
+            // System.out.println(Math.asin(yD/(Math.sqrt((Math.pow(-xD, 2) + Math.pow(yD, 2))))));
+
+            //System.out.println(Math.asin((yD) / (Math.sqrt((Math.pow(xD, 2) + Math.pow(yD, 2))))));
+            this.setSpeed(BULLET_SPEED);
+            System.out.println((Math.atan2(-yD, xD)));
+            this.setDirection(Math.toRadians(Math.toDegrees((Math.atan2(-yD, xD))) + (RANDOM.nextInt(11) - 5)));
+            System.out.println(this.getDirection());
+            // System.out.println(this.getDirection());
+
+        }
+        this.controller = controller;
+        this.alienShip = alienShip;
     }
 
     public void shoot ()
     {
-        setSpeed(BULLET_SPEED);
-        setDirection(direction);
+        this.setSpeed(BULLET_SPEED);
+        
+        this.setVelocity(this.getSpeed(), -this.getDirection());
+        
         new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 600);
     }
 

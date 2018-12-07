@@ -195,6 +195,10 @@ public class ParticipantState
                     Participant p2 = iter.next();
                     if (p1 == p2)
                         break;
+                    if (p1 instanceof AlienShip && p2 instanceof AlienBullet)
+                    {
+                        break;
+                    }
                     if (!p2.isExpired() && p1.overlaps(p2))
                     {
                         p1.collidedWith(p2);

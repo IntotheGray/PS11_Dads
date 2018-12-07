@@ -59,7 +59,9 @@ public class Controller implements KeyListener, ActionListener
     /** The game display */
     private Display display;
 
-    private boolean testMode;
+    public boolean testMode;
+
+    private controllerCountdownTimer alienTimes;
     /**
      * The alien ship if one is active
      */
@@ -72,7 +74,14 @@ public class Controller implements KeyListener, ActionListener
     /** Current level */
     private int level;
 
+
     /** all clips need for sounds */
+
+    public boolean small;
+    /**
+     * all clips need for sounds
+     */
+
     private Clip bangAlienShipClip;
     private Clip bangLargeClip;
     private Clip bangMediumClip;
@@ -85,12 +94,12 @@ public class Controller implements KeyListener, ActionListener
     private Clip thrustClip;
     private Clip saucerSmallClip;
 
-
     /**
      * Constructs a controller to coordinate the game and screen
      */
     public Controller (boolean testMode)
     {
+        this.small = false;
         this.testMode = testMode;
         // Initialize the ParticipantState
         pstate = new ParticipantState();
@@ -175,6 +184,10 @@ public class Controller implements KeyListener, ActionListener
         if (testMode == false)
         {
 
+            if (alienTimes !=null)
+            {
+            alienTimes.restart();
+            }
             addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
             addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
@@ -209,25 +222,35 @@ public class Controller implements KeyListener, ActionListener
 
     }
 
-    public void placeAlienBullet ()
+    public void placeAlienBullet (boolean small)
     {
-        alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), RANDOM.nextDouble() * 2 * Math.PI, this,
-                alienShip);
+        if (small)
+        {
+            alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), small, this, alienShip, ship);
+        }
+        if (!small)
+        {
+            alienBullet = new AlienBullet(alienShip.getX(), alienShip.getY(), small, this, alienShip, ship);
+        }
         addParticipant(alienBullet);
         alienBullet.shoot();
     }
 
     public void placeAlienShip ()
     {
+        if (level > 2)
+        {
+            this.small = true;
+        }
         Random quarter = new Random();
         int whichSide = quarter.nextInt(2);
         if (whichSide == 0)
         {
-            alienShip = new AlienShip(false, 0, quarter.nextInt(SIZE + 1), 0, this);
+            alienShip = new AlienShip(small, 0, quarter.nextInt(SIZE + 1), 0, this);
         }
         if (whichSide == 1)
         {
-            alienShip = new AlienShip(false, SIZE, quarter.nextInt(SIZE + 1), Math.PI, this);
+            alienShip = new AlienShip(small, SIZE, quarter.nextInt(SIZE + 1), Math.PI, this);
         }
 
         addParticipant(alienShip);
@@ -260,6 +283,10 @@ public class Controller implements KeyListener, ActionListener
      */
     private void clear ()
     {
+        if (alienTimes != null)
+        {
+            alienTimes.expire();
+        }
         pstate.clear();
         display.setLegend("");
         ship = null;
@@ -284,7 +311,11 @@ public class Controller implements KeyListener, ActionListener
         score = 0;
         level = 1;
 
-        new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
+        
+        if (testMode)
+        {
+            new controllerCountdownTimer(RANDOM.nextInt(500), this);
+        }
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
         display.addKeyListener(this);
@@ -377,7 +408,7 @@ public class Controller implements KeyListener, ActionListener
     /**
      * A bullet has been destroyed
      */
-    public void alienDestroyed (double x, double y)
+    public void alienDestroyed (double x, double y, boolean small)
     {
 
         placeDebris(false, alienShip.getX(), alienShip.getY());
@@ -453,6 +484,11 @@ public class Controller implements KeyListener, ActionListener
             // It may be time to make a game transition
 
             performTransition();
+            if (level > 1 && (alienTimes == null))
+            {
+                controllerCountdownTimer alienTimes = new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
+                this.alienTimes = alienTimes;
+            }
 
             // Move the participants to their new locations
             pstate.moveParticipants();
@@ -658,7 +694,7 @@ public class Controller implements KeyListener, ActionListener
 
     public void noAliens ()
     {
-        new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
+        alienTimes.restart();
     }
 
     public void countdownComplete ()

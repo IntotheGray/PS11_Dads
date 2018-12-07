@@ -16,6 +16,16 @@ public class controllerCountdownTimer implements ActionListener
         timer.start();
 
     }
+    public void expire ()
+    {
+        timer.stop();
+    }
+    
+    public void restart ()
+    {
+        timer.stop();
+        timer.start();
+    }
 
     @Override
     public void actionPerformed (ActionEvent arg0)
