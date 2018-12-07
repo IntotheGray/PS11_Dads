@@ -14,7 +14,6 @@ import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
 import asteroids.participants.Debris;
 import javax.sound.sampled.*;
-import java.util.TimerTask;
 
 
 /**
@@ -90,9 +89,13 @@ public class Controller implements KeyListener, ActionListener
     private Clip saucerBigClip;
     private Clip thrustClip;
     private Clip saucerSmallClip;
+    private Clip fireAndFlamesClip;
     
     /** Beat Delay*/
     private int beatDelay = 1000;
+    
+    /** Boolean if Enhancements is clicked*/
+    private boolean enhanced = false;
     
     /**
      * Constructs a controller to coordinate the game and screen
@@ -131,6 +134,7 @@ public class Controller implements KeyListener, ActionListener
         beat2Clip = createClip("/sounds/beat2.wav");
         saucerBigClip = createClip("/sounds/saucerBig.wav");
         thrustClip = createClip("/sounds/thrust.wav");
+        fireAndFlamesClip = createClip("/sounds/fireAndFlames.wav");
 
     }
 
@@ -458,7 +462,15 @@ public class Controller implements KeyListener, ActionListener
         if (e.getSource() instanceof JButton)
         {
             initialScreen();
-            playBeats(1);
+            if (enhanced)
+            {
+                fireAndFlamesClip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+            else
+            {
+                playBeats(1);
+            }
+            
         }
 
         // Time to refresh the screen and deal with keyboard input
@@ -500,10 +512,19 @@ public class Controller implements KeyListener, ActionListener
             if (alienShip != null)
             {
                 alienShip.nearShip(shipNearAlien);
-                saucerBigClip.loop(Clip.LOOP_CONTINUOUSLY);
+                if (small)
+                {
+                    saucerSmallClip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+                else
+                {
+                    saucerBigClip.loop(Clip.LOOP_CONTINUOUSLY);
+                }
+                
             }
             else
             {
+                saucerSmallClip.stop();
                 saucerBigClip.stop();
             }
 
@@ -778,6 +799,14 @@ public class Controller implements KeyListener, ActionListener
     public boolean getAcc ()
     {
         return accelerating;
+    }
+    
+    /**
+     * Method called to switch enhanced to true
+     */
+    public void switchEnhanced()
+    {
+        enhanced = true;
     }
 
     /**
