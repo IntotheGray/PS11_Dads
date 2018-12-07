@@ -43,6 +43,8 @@ public class Controller implements KeyListener, ActionListener
     private boolean accelerating;
     private boolean firing;
 
+    private Bullet bullet1;
+    private Bullet bullet2;
     /** Keeps track of how many bullets the ship has fired */
     private int numBullets = 0;
 
@@ -56,10 +58,13 @@ public class Controller implements KeyListener, ActionListener
     private long transitionTime;
 
     /** Number of lives left */
-    private int lives;
+    protected int lives;
 
+    private int secrets = 0;
+    private boolean resets = true;
+    private int lastKey;
     /** The game display */
-    private Display display;
+    protected Display display;
 
     private controllerCountdownTimer alienTimes;
     /**
@@ -69,16 +74,21 @@ public class Controller implements KeyListener, ActionListener
     /**
      * keep track of ship score
      */
-    private int score;
+    protected int score;
 
     /** Current level */
-    private int level;
+    protected int level;
 
     public boolean small;
+    public Object payload;
+    private Clip laugh;
     /**
      * all clips need for sounds
      */
 
+    public double followX;
+    public double followY;
+    private controllerCountdownTimer followTimer;
     private Clip bangAlienShipClip;
     private Clip bangLargeClip;
     private Clip bangMediumClip;
@@ -98,15 +108,36 @@ public class Controller implements KeyListener, ActionListener
     /** Boolean if Enhancements is clicked */
     protected boolean enhanced;
 
+    public int difficulty;
+
+    public boolean bullets = false;
+    
+    public boolean cantLoseLives = false;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
-    public Controller ()
+    public Controller (int payload)
     {
+        if (payload == 1)
+        {
+            this.difficulty = 1;
+        }
+        if (payload == 0)
+        {
+            this.difficulty = 0;
+        }
+        if (payload == 2)
+        {
+            this.difficulty = 2;
+        }
+        if (payload == 3)
+        {
+            this.difficulty = 3;
+        }
         this.small = false;
-
         // Initialize the ParticipantState
-        pstate = new ParticipantState();
+        pstate = new ParticipantState( difficulty,this);
 
         // Set up the refresh timer.
         refreshTimer = new Timer(FRAME_INTERVAL, this);
@@ -118,9 +149,11 @@ public class Controller implements KeyListener, ActionListener
         display = new Display(this);
 
         // Bring up the splash screen and start the refresh timer
+
         splashScreen();
         display.setVisible(true);
         refreshTimer.start();
+
 
         // Set up all sounds
 
@@ -136,6 +169,7 @@ public class Controller implements KeyListener, ActionListener
         saucerBigClip = createClip("/sounds/saucerBig.wav");
         thrustClip = createClip("/sounds/thrust.wav");
         fireAndFlamesClip = createClip("/sounds/fireAndFlames.wav");
+        laugh = createClip("/sounds/laugh.wav");
 
     }
 
@@ -187,6 +221,7 @@ public class Controller implements KeyListener, ActionListener
     {
         display.setLegend(GAME_OVER);
         display.removeKeyListener(this);
+        display.addKeyListener(this);
     }
 
     /**
@@ -199,23 +234,55 @@ public class Controller implements KeyListener, ActionListener
         ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
         addParticipant(ship);
         display.setLegend("");
+        if (difficulty == 0)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(5000,"invulnerable", this);
+        }
+        if (difficulty == 2)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(3000,"invulnerable", this);
+        }
+        if (difficulty == 3)
+        {
+        cantLoseLives = true;
+        new controllerCountdownTimer(1000,"invulnerable", this);
+        }
+
     }
 
     /**
      * Places an asteroid near one corner of the screen. Gives it a random velocity and rotation.
      */
-    private void placeAsteroids (int level)
+    protected void placeAsteroids (int level)
     {
 
         if (alienTimes != null)
         {
             alienTimes.restart();
         }
+        if (followTimer != null)
+        {
+            followTimer.restart();
+        }
         addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
         addParticipant(new Asteroid(1, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
-        addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
-        addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
-
+        if (difficulty > 0 )
+        {
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
+        if (difficulty > 1 )
+        {
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
+        if (difficulty > 2  )
+        {
+            addParticipant(new Asteroid(2, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+            addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+        }
         if (level > 1)
         {
             for (int i = 1; i < level; i++)
@@ -234,11 +301,18 @@ public class Controller implements KeyListener, ActionListener
 
     private void placeBullet ()
     {
-        if (pstate.bulletCount() < BULLET_LIMIT)
+        if (pstate.bulletCount() < BULLET_LIMIT || bullets)
         {
 
             bullet = new Bullet(ship.getXNose(), ship.getYNose(), ship.getRotation(), this, ship);
             addParticipant(bullet);
+            if (bullets)
+            {
+                bullet1 = new Bullet(ship.getXNose() + 15, ship.getYNose(), ship.getRotation(), this, ship);
+                addParticipant(bullet1);
+                bullet2 = new Bullet(ship.getXNose() - 15, ship.getYNose(), ship.getRotation(), this, ship);
+                addParticipant(bullet2);
+            }
 
         }
 
@@ -303,7 +377,7 @@ public class Controller implements KeyListener, ActionListener
     /**
      * Clears the screen so that nothing is displayed
      */
-    private void clear ()
+    protected void clear ()
     {
         if (alienTimes != null)
         {
@@ -319,6 +393,7 @@ public class Controller implements KeyListener, ActionListener
      */
     private void initialScreen ()
     {
+
         // Clear the screen
         clear();
 
@@ -332,6 +407,10 @@ public class Controller implements KeyListener, ActionListener
         lives = 3;
         score = 0;
         level = 1;
+        if (bullets)
+        {
+            lives = 3;
+        }
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -386,6 +465,7 @@ public class Controller implements KeyListener, ActionListener
         if (pstate.countAsteroids() == 0 && alienShip == null)
         {
             scheduleTransition(END_DELAY);
+
             level = level + 1;
 
             // Only executed if enhanced
@@ -498,6 +578,12 @@ public class Controller implements KeyListener, ActionListener
         // and bring up the initial screen
         if (e.getSource() instanceof JButton)
         {
+            if (secrets >= 9)
+            {
+                secrets = 0;
+                bullets = true;
+                JOptionPane.showMessageDialog(null, "May You Ascend Gracefully");
+            }
             initialScreen();
             if (this.enhanced)
             {
@@ -530,6 +616,11 @@ public class Controller implements KeyListener, ActionListener
             {
                 placeBullet();
                 bullet.shoot();
+                if (bullets)
+                {
+                    bullet1.shoot();
+                    bullet2.shoot();
+                }
             }
 
             // It may be time to make a game transition
@@ -539,6 +630,12 @@ public class Controller implements KeyListener, ActionListener
             {
                 controllerCountdownTimer alienTimes = new controllerCountdownTimer(RANDOM.nextInt(5000) + 5000, this);
                 this.alienTimes = alienTimes;
+            }
+            if (level > 1 && (followTimer == null))
+            {
+                controllerCountdownTimer followTimer = new controllerCountdownTimer(RANDOM.nextInt(1000), "tracer",
+                        this);
+                this.followTimer = followTimer;
             }
 
             // Move the participants to their new locations
@@ -619,10 +716,51 @@ public class Controller implements KeyListener, ActionListener
             // ship.turnRight();
             turningRight = true;
         }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship == null)
+        {
+            
+
+            if (resets == false && (lastKey == KeyEvent.VK_LEFT && secrets < 8)
+                    )
+            {
+                secrets = secrets + 1;
+                System.out.println(secrets);
+                lastKey = KeyEvent.VK_RIGHT;
+            }
+
+            else {
+                resets = true;
+                secrets = 0;
+            }
+            
+        }
         if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
         {
             // ship.turnLeft();
             turningLeft = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship == null)
+        {
+
+            if (resets == false && (lastKey == KeyEvent.VK_DOWN)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_LEFT;
+                
+            }
+            else if (resets == false && (lastKey == KeyEvent.VK_RIGHT)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_LEFT;
+            }
+            else {
+                resets = true;
+                secrets = 0;
+            }
         }
         if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
         {
@@ -631,12 +769,58 @@ public class Controller implements KeyListener, ActionListener
             accelerating = true;
             thrustClip.loop(Clip.LOOP_CONTINUOUSLY);
         }
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship == null)
+        {
+            // ship.accelerate();
+
+            if (resets = true)
+            {
+                secrets = 0;
+
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_UP;
+                resets = false;
+            }
+            else if (resets == false && (lastKey == KeyEvent.VK_UP)
+                    )
+            {
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_UP;
+            }
+            else {
+                resets = true;
+                secrets = 0;
+            }
+        }
         if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
         {
             // placeBullet();
             // bullet.shoot();
             firing = true;
             fireClip.start();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN && ship == null)
+        {
+            // placeBullet();
+            // bullet.shoot();
+            if (resets == false && (lastKey == KeyEvent.VK_UP)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_DOWN;
+            }
+            else if (resets == false && (lastKey == KeyEvent.VK_DOWN)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_DOWN;
+            }
+            else {
+                resets = true;
+                secrets = 0;
+            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
@@ -655,6 +839,21 @@ public class Controller implements KeyListener, ActionListener
             // ship.turnLeft();
             turningLeft = true;
         }
+        if (e.getKeyCode() == KeyEvent.VK_A && ship == null)
+        {
+            if (resets == false && (lastKey == KeyEvent.VK_B)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_A;
+            }
+
+            else {
+                resets = true;
+                secrets = 0;
+            }
+        }
         if (e.getKeyCode() == KeyEvent.VK_W && ship != null)
         {
             // ship.accelerate();
@@ -669,10 +868,29 @@ public class Controller implements KeyListener, ActionListener
             // bullet.shoot();
             firing = true;
             fireClip.start();
+            
 
         }
+        
+        if (e.getKeyCode() == KeyEvent.VK_B && ship == null)
+        {
+            if (resets == false && (lastKey == KeyEvent.VK_RIGHT)
+                    )
+            {
+                System.out.println(secrets);
+                secrets = secrets + 1;
+                lastKey = KeyEvent.VK_B;
+            }
 
+            else {
+                resets = true;
+                secrets = 0;
+            }
+        }
     }
+
+    
+        
 
     /**
      * These events are ignored.
@@ -693,11 +911,13 @@ public class Controller implements KeyListener, ActionListener
             // ship.turnRight();
             turningRight = false;
         }
+
         if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
         {
             // ship.turnLeft();
             turningLeft = false;
         }
+        
         if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
         {
             // ship.accelerate();
@@ -705,8 +925,14 @@ public class Controller implements KeyListener, ActionListener
             accelerating = false;
             thrustClip.stop();
             thrustClip.setFramePosition(0);
+            
 
         }
+        
+
+            
+
+        
         if (e.getKeyCode() == KeyEvent.VK_DOWN && ship != null)
         {
             // placeBullet();
@@ -715,6 +941,9 @@ public class Controller implements KeyListener, ActionListener
             fireClip.stop();
             fireClip.setFramePosition(0);
         }
+        
+            
+        
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
         {
@@ -732,6 +961,8 @@ public class Controller implements KeyListener, ActionListener
         {
             // ship.turnLeft();
             turningLeft = false;
+        
+        
         }
         if (e.getKeyCode() == KeyEvent.VK_W && ship != null)
         {
@@ -750,16 +981,49 @@ public class Controller implements KeyListener, ActionListener
             fireClip.stop();
             fireClip.setFramePosition(0);
         }
+        if (e.getKeyCode() == KeyEvent.VK_R && ship!= null)
+        {
+            lives = 0;
+            Ship.expire(ship);
+            this.shipDestroyed();
+            ship = null;
+            finalScreen();
+            
+        }
+        
+        
+    
     }
+
 
     public void noAliens ()
     {
         alienTimes.restart();
     }
 
-    public void countdownComplete ()
+    public void countdownComplete (Object payload)
     {
-        placeAlienShip();
+        if (payload == "alien")
+        {
+            placeAlienShip();
+        }
+        else if (payload == "tracer" && (ship != null))
+        {
+            // im already tracer
+            followX = ship.getX();
+            followY = ship.getY();
+            followTimer.restart();
+
+        }
+        else if (payload == "tracer" && (ship != null))
+        {
+
+            followTimer.restart();
+        }
+        else if (payload == "invulnerable" && (ship != null))
+        {
+            this.cantLoseLives = false;
+        }
     }
 
     /**
@@ -837,6 +1101,7 @@ public class Controller implements KeyListener, ActionListener
     {
         return accelerating;
     }
+
 
     /**
      * called to switch enhanced to true

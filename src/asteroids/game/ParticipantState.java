@@ -22,14 +22,24 @@ public class ParticipantState
     /** Participants that are waiting to be added to the game */
     private Set<Participant> pendingAdds;
 
+    public int difficulty;
+    
+    public boolean invulnerable;
+    
+    private Controller controller;
     /**
      * Creates an empty ParticipantState.
      */
-    public ParticipantState ()
+    public ParticipantState (int difficulty,Controller controller)
     {
         // No participants at the start
         participants = new LinkedList<Participant>();
         pendingAdds = new HashSet<Participant>();
+        this.difficulty = difficulty;
+        
+        this.controller = controller;
+        
+        
     }
 
     /**
@@ -178,6 +188,12 @@ public class ParticipantState
             }
         }
     }
+    public void collide(Participant p1, Participant p2)
+    {
+        double abc = p1.getDirection();
+        p1.elastic(p2.getDirection());
+        p2.elastic(abc);
+    }
 
     /**
      * Compares each pair of elements to detect collisions, then notifies all listeners of any found. Deals with each
@@ -193,14 +209,30 @@ public class ParticipantState
                 while (iter.hasNext())
                 {
                     Participant p2 = iter.next();
+                    
                     if (p1 == p2)
                         break;
                     if (p1 instanceof AlienShip && p2 instanceof AlienBullet)
                     {
                         break;
                     }
+                    
                     if (!p2.isExpired() && p1.overlaps(p2))
                     {
+                        if (p1 instanceof Asteroid && p2 instanceof Asteroid && (this.difficulty != 1 ))
+                        {
+                            if (p1.canCollides(p2) && p2.canCollides(p1))
+                            {
+                            collide(p1,p2);
+                            new collisionTimer(300,this,p1,p2);
+                            }
+                            break;
+                           
+                        }
+                        if ((p1 instanceof Ship || p2 instanceof Ship ) && (controller.cantLoseLives))
+                        {
+                            break;
+                        }
                         p1.collidedWith(p2);
                         p2.collidedWith(p1);
                     }

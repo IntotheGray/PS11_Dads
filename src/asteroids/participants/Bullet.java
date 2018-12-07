@@ -56,13 +56,28 @@ public class Bullet extends Participant implements AsteroidDestroyer, AlienDestr
         if (BULLET_SPEED + ship.getSpeed() <= SPEED_LIMIT)
         {
             setSpeed(BULLET_SPEED + ship.getSpeed());
+            setDirection(direction);
         }
         else
         {
             setSpeed(SPEED_LIMIT);
+            setDirection(direction);
         }
-        setDirection(direction);
-        new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 600);
+        if (controller.bullets)
+        {
+            setSpeed(30);
+            setDirection(direction);
+            
+        }
+        
+        if (!controller.bullets)
+        {
+            new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 600);
+        }
+        if (controller.bullets)
+        {
+            new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 1600);
+        }
         // accelerate(SHIP_ACCELERATION);
 
         // move();

@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
  * 
  * @author Eric J. Marsh, Jack Ronnie Skate Fast...
  */
-public class Asteroids 
+public class Asteroids
 {
     /**
      * Launches a dialog that lets the user choose between a classic and an enhanced game of Asteroids.
@@ -28,12 +28,30 @@ public class Asteroids
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (choice == 0)
         {
-            new Controller();
+            new Controller(1);
         }
         else if (choice == 1)
         {
-            //JOptionPane.showMessageDialog(null, "Welcome to hell amigo");
-            new EnhanceController();
+            String[] options2 = { "Easy", "Hard", "D̮͚̝̬e̡a̖̣̙͎̲͞ͅt͍͉͓̰͠h͏͚ͅ" };
+            int choice2 = JOptionPane.showOptionDialog(null, "Choose your level", "Don't pick option 3",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options2, options2[0]);
+                if (choice2 == 0)
+                {
+                    new Controller(0);
+                }
+                else if (choice2 == 1)
+                {
+                    new Controller(2);
+                }
+                else if (choice2 == 2)
+                {
+                    String[] option3 = {"thanks"};
+                    JOptionPane.showOptionDialog(null, "Welcome to hell amigo", "oh no",JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,null,option3, 0);
+                    
+                    new Controller(3);
+                }
+
+
             
         }
     }

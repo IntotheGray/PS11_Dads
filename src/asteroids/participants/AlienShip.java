@@ -20,7 +20,9 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
     private Shape outline;
     private double direction;
     private boolean nearbyShip;
-
+    private int health = 1;
+    private int velo;
+    private int interval;
     public AlienShip (boolean small, double x, double y, double direction, Controller controller)
     {
         new ParticipantCountdownTimer(this, "spawn", ALIEN_DELAY);
@@ -30,20 +32,82 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
         this.direction = direction;
         setPosition(x, y);
 
-
         createAlienShipOutline(small);
         setDirection(direction);
         if (this.small)
         {
-            setVelocity(10, this.getDirection());
+            
+            if (controller.difficulty == 1)
+            {
+                velo = 10;
+            this.health = 1;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 0)
+            {this.health = 1;
+            velo = 8;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 2)
+            {this.health = 1;
+            velo = 11;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 3)
+            {this.health = 1;
+            velo = 12;
+            setVelocity(velo , this.getDirection());
+            }
         }
-        else if (!this.small)
+        else if (!this.small )
         {
-            setVelocity(5, this.getDirection());
+            if (controller.difficulty == 0)
+            {
+            this.health = 1;
+            this .velo = 3;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 2)
+            {
+            this.health = 2;
+            this.velo = 5;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 3)
+            {
+            this.health = 2;
+            this.velo = 7;
+            setVelocity(velo, this.getDirection());
+            }
+            if (controller.difficulty == 1)
+            {
+            this.health = 1;
+            velo = 5;
+            setVelocity(velo, this.getDirection());
+            }
         }
         Random turny = new Random();
         new ParticipantCountdownTimer(this, "turn", turny.nextInt(500) + 1000);
-        new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 1000);
+        if (controller.difficulty == 2)
+        {
+            interval = 500;
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + interval);
+        }
+        if (controller.difficulty == 0)
+        {
+            interval = 1500;
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) +interval);
+        }
+        if (controller.difficulty == 3)
+        {
+            interval = 0;
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + interval);
+        }
+        if (controller.difficulty == 1)
+        {
+            interval = 1000;
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + interval);
+        }
     }
 
     private void createAlienShipOutline (boolean small)
@@ -98,9 +162,13 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
     {
         if (p instanceof AlienDestroyer)
         {
+            this.health =this.health -1;
+            if (health <= 0)
+            {
             Participant.expire(this);
 
-            controller.alienDestroyed(getX(), getY(),small);
+            controller.alienDestroyed(getX(), getY(), small);
+            }
 
         }
         // TODO Auto-generated method stub
@@ -115,44 +183,44 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
 
             if (!small)
             {
-            Random randomDirection = new Random();
-            if (randomDirection.nextInt(3) == 0)
-            {
-                
-                setVelocity(5, this.direction);
-                setVelocity(5, this.getDirection() - Math.PI / 4);
+                Random randomDirection = new Random();
+                if (randomDirection.nextInt(3) == 0)
+                {
 
-            }
-            else if (randomDirection.nextInt(3) == 1)
-            {
-                setVelocity(5, this.direction);
-                setVelocity(5, this.getDirection());
-            }
-            else if (randomDirection.nextInt(3) == 2)
-            {
-                setVelocity(5, this.direction);
-                setVelocity(5, this.getDirection() + Math.PI / 4);
-            }
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection() - Math.PI / 4);
+
+                }
+                else if (randomDirection.nextInt(3) == 1)
+                {
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection());
+                }
+                else if (randomDirection.nextInt(3) == 2)
+                {
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection() + Math.PI / 4);
+                }
             }
             if (small)
             {
                 Random randomDirection = new Random();
                 if (randomDirection.nextInt(3) == 0)
                 {
-                    
-                    setVelocity(10, this.direction);
-                    setVelocity(10, this.getDirection() - Math.PI / 4);
+
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection() - Math.PI / 4);
 
                 }
                 else if (randomDirection.nextInt(3) == 1)
                 {
-                    setVelocity(10, this.direction);
-                    setVelocity(10, this.getDirection());
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection());
                 }
                 else if (randomDirection.nextInt(3) == 2)
                 {
-                    setVelocity(10, this.direction);
-                    setVelocity(10, this.getDirection() + Math.PI / 4);
+                    setVelocity(velo, this.direction);
+                    setVelocity(velo, this.getDirection() + Math.PI / 4);
                 }
             }
             createAlienShipOutline(small);
@@ -166,9 +234,9 @@ public class AlienShip extends Participant implements ShipDestroyer, AsteroidDes
             {
                 controller.placeAlienBullet(small);
             }
-            
+
             Random turny = new Random();
-            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + 2000);
+            new ParticipantCountdownTimer(this, "shoot", turny.nextInt(1500) + interval);
 
         }
     }

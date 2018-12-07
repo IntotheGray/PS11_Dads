@@ -32,6 +32,8 @@ public abstract class Participant
 
     /** True if the Participant is expired */
     private boolean expired;
+    
+    private Participant bool;
 
     /**
      * Constructs an active Participant with no velocity, rotation, or border.
@@ -315,5 +317,32 @@ public abstract class Participant
         }
         g.draw(border);
     }
+    public void elastic (Double direction)
+    {
+        this.setDirection(direction);
+    }
 
+    public boolean canCollides (Participant p2)
+    {
+        if (bool == null)
+        {
+            return true;
+        }
+        if (bool == p2)
+        {
+            return false;
+        }
+
+        
+        return true;
+    }
+    public void setCanCollides (Participant p2)
+    {
+        this.bool = p2;
+    }
+    public void resetCollides ()
+    {
+        this.bool = null;
+    }
+    
 }

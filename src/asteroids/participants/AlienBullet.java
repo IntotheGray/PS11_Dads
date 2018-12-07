@@ -23,12 +23,16 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
     final long startTimes;
     private long endTimes;
     private Controller controller;
-
+    private double xD;
+    private double yD;
+    private boolean small;
     public AlienBullet (double x, double y, boolean small, Controller controller, AlienShip alienShip, Ship ship)
     {
 
+        this.small = small;
         setPosition(x, y);
 
+        
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(-1, 0);
 
@@ -42,23 +46,22 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
         if (!small)
         {
 
+            this.setSpeed(BULLET_SPEED);
             this.setDirection(RANDOM.nextDouble() * 2 * Math.PI);
+            
         }
         else if (small)
         {
-            double xD = ship.getX() - x;
-            double yD = ship.getY() - y;
+            this.xD = ship.getX() - x;
+            this.yD = ship.getY() - y;
             // System.out.println(this.getDirection());
 
 
             // System.out.println(Math.asin(yD/(Math.sqrt((Math.pow(-xD, 2) + Math.pow(yD, 2))))));
 
-            //System.out.println(Math.asin((yD) / (Math.sqrt((Math.pow(xD, 2) + Math.pow(yD, 2))))));
             this.setSpeed(BULLET_SPEED);
-            System.out.println((Math.atan2(-yD, xD)));
             this.setDirection(Math.toRadians(Math.toDegrees((Math.atan2(-yD, xD))) + (RANDOM.nextInt(11) - 5)));
-            System.out.println(this.getDirection());
-            // System.out.println(this.getDirection());
+            
 
         }
         this.controller = controller;
@@ -71,8 +74,24 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
         
         this.setVelocity(this.getSpeed(), -this.getDirection());
         
+        if (controller.difficulty == 1)
+        {
         new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 600);
-    }
+        }
+        if (controller.difficulty == 0)
+        {
+        new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION );
+        }
+        if (controller.difficulty == 2)
+        {
+        new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 800);
+        }
+        if (controller.difficulty == 3)
+        {
+        new ParticipantCountdownTimer(this, "travelTime", BULLET_DURATION + 800);
+        new ParticipantCountdownTimer(this,"followyTime", 200);
+        }
+        }
 
     @Override
     protected Shape getOutline ()
@@ -93,6 +112,17 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
 
     }
 
+    public void aimAgain(double x , double y)
+    {
+        if (this.small) {
+        this.xD = x - this.getX();
+        this.yD = y - this.getY();
+        this.setSpeed(BULLET_SPEED);
+        this.setDirection(Math.toRadians(Math.toDegrees((Math.atan2(-yD, xD)))));
+        this.setVelocity(this.getSpeed(), -this.getDirection());
+        }
+        }
+
     public long timeElapsed (Participant p)
     {
         endTimes = System.currentTimeMillis();
@@ -109,5 +139,10 @@ public class AlienBullet extends Participant implements ShipDestroyer, AsteroidD
 
             controller.alienBulletDestroyed();
         }
+        if (payload.equals("followyTime"))
+                {
+            aimAgain(controller.followX,controller.followY);
+            new ParticipantCountdownTimer(this,"followyTime", 200);
+                }
     }
 }
