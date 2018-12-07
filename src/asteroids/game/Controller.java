@@ -3,9 +3,12 @@ package asteroids.game;
 import static asteroids.game.Constants.*;
 import java.awt.event.*;
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Scanner;
 import javax.swing.*;
 import asteroids.participants.AlienBullet;
 import asteroids.participants.AlienShip;
@@ -153,6 +156,26 @@ public class Controller implements KeyListener, ActionListener
         clear();
         display.setLegend("Asteroids");
 
+        if (enhanced = true)
+        {
+            String content = null;
+            File file = new File("C:\\Users\\jirba\\eclipse-workspace\\PS11_Dads\\src\\asteroids\\game\\HighScores"); // For example, foo.txt
+            FileReader reader = null;
+            try
+            {
+                reader = new FileReader(file);
+                char[] chars = new char[(int) file.length()];
+                reader.read(chars);
+                content = new String(chars);
+                reader.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            
+            
+        }
         // Place four asteroids near the corners of the screen.
         placeAsteroids(0);
     }
@@ -209,7 +232,6 @@ public class Controller implements KeyListener, ActionListener
         }
     }
 
-    
     private void placeBullet ()
     {
         if (pstate.bulletCount() < BULLET_LIMIT)
@@ -370,7 +392,7 @@ public class Controller implements KeyListener, ActionListener
             // Adds life for reaching a level that is a multiple of 3
             if (this.enhanced)
             {
-                if (((level%3) == 0) && level != 1 && lives < 3)
+                if (((level % 3) == 0) && level != 1 && lives < 3)
                 {
                     lives = lives + 1;
                 }
@@ -434,12 +456,12 @@ public class Controller implements KeyListener, ActionListener
         {
             scheduleTransition(END_DELAY);
             level = level + 1;
-            
+
             // Only executed if enhanced
             // Adds life for reaching a level that is a multiple of 3
             if (this.enhanced)
             {
-                if (((level%3) == 0) && level != 1 && lives < 3)
+                if (((level % 3) == 0) && level != 1 && lives < 3)
                 {
                     lives = lives + 1;
                 }
@@ -816,11 +838,14 @@ public class Controller implements KeyListener, ActionListener
         return accelerating;
     }
 
-    public void switchEnhanced()
+    /**
+     * Returns 
+     */
+    public void switchEnhanced ()
     {
         enhanced = true;
     }
-
+    
     /**
      * Creates an audio clip from a sound file.
      */

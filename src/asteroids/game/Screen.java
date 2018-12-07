@@ -68,16 +68,21 @@ public class Screen extends JPanel
         int size = g.getFontMetrics().stringWidth(legend);
         g.drawString(legend, (SIZE - size) / 2, SIZE / 2);
         // Draw Score
-        setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
-        FontMetrics fm = g.getFontMetrics();
+        Graphics2D g2 = (Graphics2D) graphics;
+        g2.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+        FontMetrics fm = g2.getFontMetrics();
         int height = fm.getHeight();
-        g.drawString(Integer.toString(controller.getScore()), height, height);
-        g.drawString(Integer.toString(controller.getLevel()), (750 - height), height);
+        g2.drawString(Integer.toString(controller.getScore()), height, height);
+        g2.drawString(Integer.toString(controller.getLevel()), (750 - height), height);
 
-        int lives = controller.getLives();
-
+        if (controller.)
+        Graphics2D g3 = (Graphics2D) graphics;
+        g3.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
         
-
+        
+        
+        int lives = controller.getLives();
+        
         if (lives == 3)
         {
             Path2D.Double poly = new Path2D.Double();
